@@ -35,7 +35,7 @@ public class CityBus {
 
     private String busStop;
 
-    private boolean isRealtime;
+    private Boolean isRealtime;
 
     @JoinTable(name = "bus_route",
             joinColumns = @JoinColumn(name = "bus_id"),
@@ -58,6 +58,10 @@ public class CityBus {
         this.busColor = busColor;
         this.busStop = busStop;
         this.isRealtime = isRealtime;
+    }
+
+    public void addArrivalTime(LocalTime arrivalTime) {
+        arrivalTimes.add(arrivalTime);
     }
 
     public void updateArrivalTimes(List<LocalTime> arrivalTimes) {

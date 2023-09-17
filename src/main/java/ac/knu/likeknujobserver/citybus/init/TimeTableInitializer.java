@@ -4,6 +4,9 @@ package ac.knu.likeknujobserver.citybus.init;
 import ac.knu.likeknujobserver.citybus.model.CityBus;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -58,6 +63,27 @@ public class TimeTableInitializer {
                 text = text.split("\\(")[0];
             }
             LocalTime time = LocalTime.parse(text, dateTimeFormatter).plusMinutes(13);
+        }
+    }
+
+    @Transactional
+    public void initializeYesanCityBusTime() throws IOException {
+        String filePath = "src/main/resources/static/bus.csv";
+        FileReader fileReader = new FileReader(filePath);
+        CSVParser csvRecords = CSVFormat.Builder.create().setDelimiter(',').build().parse(fileReader);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        for (CSVRecord csvRecord : csvRecords) {
+            String busNumber = csvRecord.get(0);
+            String arrivalTime = csvRecord.get(1);
+
+            CityBus cityBus = cityBusRepository.findByBusNumberAndBusStop(busNumber, "예산역")
+                    .orElseGet(() -> {
+                        CityBus newCityBus = CityBus.builder().busNumber(busNumber).busName(busNumber).busStop("예산역").build();
+                        return cityBusRepository.save(newCityBus);
+                    });
+
+            LocalTime time = LocalTime.parse(arrivalTime, dateTimeFormatter);
             cityBus.addArrivalTime(time);
         }
     }

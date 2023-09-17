@@ -25,7 +25,7 @@ public class CityBusService {
     public void updateRealtimeBusArrivalTime(List<BusArrivalTime> busArrivalTimes) {
         Map<String, Map<String, List<BusArrivalTime>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
 
-        cityBusRepository.findByRealtimeIsTrue().forEach(cityBus -> {
+        cityBusRepository.findByIsRealtimeIsTrue().forEach(cityBus -> {
             String busStop = cityBus.getBusStop();
             String busName = cityBus.getBusName();
             Map<String, List<BusArrivalTime>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);

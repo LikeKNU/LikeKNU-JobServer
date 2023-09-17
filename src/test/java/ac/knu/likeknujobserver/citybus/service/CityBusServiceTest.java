@@ -51,7 +51,7 @@ class CityBusServiceTest {
         );
 
         // when
-        when(cityBusRepository.findByRealtimeIsTrue()).thenReturn(cityBuses);
+        when(cityBusRepository.findByIsRealtimeIsTrue()).thenReturn(cityBuses);
         cityBusService.updateRealtimeBusArrivalTime(busArrivalTimes);
 
         // then
