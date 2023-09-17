@@ -46,7 +46,8 @@ class CityBusServiceTest {
         List<CityBus> cityBuses = List.of(
                 CityBus.builder().busName("100").busStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY.getStopName()).build(),
                 CityBus.builder().busName("200").busStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY.getStopName()).build(),
-                CityBus.builder().busName("100").busStop(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()).build()
+                CityBus.builder().busName("100").busStop(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()).build(),
+                CityBus.builder().busName("200").busStop(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()).build()
         );
 
         // when
