@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalTime;
@@ -47,7 +48,20 @@ public class CityBus {
     @ElementCollection
     private List<LocalTime> arrivalTimes = new ArrayList<>();
 
-    public void addArrivalTime(LocalTime time) {
-        arrivalTimes.add(time);
+    protected CityBus() {
+    }
+
+    @Builder
+    public CityBus(String busNumber, String busName, String busColor, String busStop, boolean isRealtime) {
+        this.busNumber = busNumber;
+        this.busName = busName;
+        this.busColor = busColor;
+        this.busStop = busStop;
+        this.isRealtime = isRealtime;
+    }
+
+    public void updateArrivalTimes(List<LocalTime> arrivalTimes) {
+        this.arrivalTimes.clear();
+        this.arrivalTimes.addAll(arrivalTimes);
     }
 }

@@ -1,18 +1,24 @@
 package ac.knu.likeknujobserver.citybus.dto;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalTime;
 
-@ToString
 @Getter
 public class BusArrivalTime {
 
-    private Long id;
-    private String busNumber;
     private String busName;
     private DepartureStop departureStop;
     private LocalTime arrivalTime;
-    private int remainingStop;
+
+    protected BusArrivalTime() {
+    }
+
+    @Builder
+    public BusArrivalTime(String busName, DepartureStop departureStop, LocalTime arrivalTime) {
+        this.busName = busName;
+        this.departureStop = departureStop;
+        this.arrivalTime = arrivalTime;
+    }
 }
