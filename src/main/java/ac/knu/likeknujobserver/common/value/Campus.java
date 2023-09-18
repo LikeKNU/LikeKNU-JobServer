@@ -5,7 +5,10 @@ import lombok.Getter;
 @Getter
 public enum Campus {
 
-    SINGWAN("신관"), CHEONAN("천안"), YESAN("예산");
+    ALL("공통"),
+    SINGWAN("신관"),
+    CHEONAN("천안"),
+    YESAN("예산");
 
     private final String campusName;
 
