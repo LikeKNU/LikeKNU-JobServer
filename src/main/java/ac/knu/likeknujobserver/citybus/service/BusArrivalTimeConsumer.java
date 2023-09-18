@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.citybus.service;
 
-import ac.knu.likeknujobserver.citybus.dto.BusArrivalTime;
+import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class BusArrivalTimeConsumer {
     }
 
     @RabbitListener(queues = "${rabbitmq.bus-arrival-time-queue-name}")
-    public void updateRealtimeBusArrivalTime(List<BusArrivalTime> busArrivalTimes) {
+    public void consumeBusArrivalTimeMessage(List<BusArrivalTimeMessage> busArrivalTimes) {
         cityBusService.updateRealtimeBusArrivalTime(busArrivalTimes);
     }
 }

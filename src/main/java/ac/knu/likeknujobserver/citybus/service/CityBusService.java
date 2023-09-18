@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.citybus.service;
 
-import ac.knu.likeknujobserver.citybus.dto.BusArrivalTime;
+import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,28 +22,28 @@ public class CityBusService {
     }
 
     @Transactional
-    public void updateRealtimeBusArrivalTime(List<BusArrivalTime> busArrivalTimes) {
-        Map<String, Map<String, List<BusArrivalTime>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
+    public void updateRealtimeBusArrivalTime(List<BusArrivalTimeMessage> busArrivalTimes) {
+        Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
 
         cityBusRepository.findByIsRealtimeIsTrue().forEach(cityBus -> {
             String busStop = cityBus.getBusStop();
             String busName = cityBus.getBusName();
-            Map<String, List<BusArrivalTime>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
+            Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
 
             if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
                 List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName).stream()
-                        .map(BusArrivalTime::getArrivalTime)
+                        .map(BusArrivalTimeMessage::getArrivalTime)
                         .toList();
                 cityBus.updateArrivalTimes(arrivalTimes);
             }
         });
     }
 
-    private Map<String, Map<String, List<BusArrivalTime>>> groupingByDepartureStopAndBusName(List<BusArrivalTime> busArrivalTimes) {
+    private Map<String, Map<String, List<BusArrivalTimeMessage>>> groupingByDepartureStopAndBusName(List<BusArrivalTimeMessage> busArrivalTimes) {
         return busArrivalTimes.stream()
                 .collect(
                         groupingBy(busArrivalTime -> busArrivalTime.getDepartureStop().getStopName(),
-                                groupingBy(BusArrivalTime::getBusName))
+                                groupingBy(BusArrivalTimeMessage::getBusName))
                 );
     }
 }
