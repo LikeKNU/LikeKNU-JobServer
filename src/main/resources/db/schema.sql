@@ -1,3 +1,16 @@
+USE like_knu;
+
+CREATE TABLE IF NOT EXISTS announcement
+(
+    id                 BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    announcement_title VARCHAR(100) NOT NULL,
+    announcement_url   VARCHAR(500) NOT NULL,
+    announcement_date  DATETIME     NOT NULL,
+    campus             VARCHAR(10)  NOT NULL,
+    category           VARCHAR(20)  NOT NULL,
+    tag                VARCHAR(20)  NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS route
 (
     id             BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
