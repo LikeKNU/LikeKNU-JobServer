@@ -7,6 +7,7 @@ import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.announcement.value.Tag;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.util.stream.Collectors.groupingBy;
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class AnnouncementService {
@@ -48,13 +50,15 @@ public class AnnouncementService {
     }
 
     private void initializeAnnouncementCache(Map<Category, List<Announcement>> announcementsByCategory) {
+        Arrays.stream(Category.values())
+                .forEach(category -> ANNOUNCEMENT_CACHE.put(category, new LinkedBlockingQueue<>()));
+
         announcementsByCategory.keySet().stream()
                 .flatMap(category -> announcementsByCategory.get(category).stream()
                         .map(AnnouncementMessage::of))
+                .peek(announcementMessage -> log.info("announcementMessage = {}", announcementMessage))
                 .forEach(announcementMessage -> {
-                    Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE
-                            .putIfAbsent(announcementMessage.getCategory(), new LinkedBlockingQueue<>());
-                    assert announcementMessages != null;
+                    Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
                     announcementMessages.offer(announcementMessage);
                 });
     }

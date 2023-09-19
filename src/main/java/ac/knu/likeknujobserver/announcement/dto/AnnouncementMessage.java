@@ -3,6 +3,8 @@ package ac.knu.likeknujobserver.announcement.dto;
 import ac.knu.likeknujobserver.announcement.model.Announcement;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.common.value.Campus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,10 +14,15 @@ import java.util.Objects;
 @Getter
 public class AnnouncementMessage {
 
+    @NotBlank
     private String title;
+    @NotBlank
     private String announcementUrl;
+    @NotNull
     private LocalDate announcementDate;
+    @NotNull
     private Campus campus;
+    @NotNull
     private Category category;
 
     protected AnnouncementMessage() {
