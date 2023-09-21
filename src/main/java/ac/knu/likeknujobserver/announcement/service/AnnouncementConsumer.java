@@ -1,6 +1,7 @@
 package ac.knu.likeknujobserver.announcement.service;
 
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
+import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class AnnouncementConsumer {
     }
 
     @RabbitListener(queues = "${rabbitmq.announcement-queue-name}")
-    public void consumeAnnouncementMessage(AnnouncementMessage announcementMessage) {
+    public void consumeAnnouncementMessage(@Valid AnnouncementMessage announcementMessage) {
         announcementService.updateAnnouncement(announcementMessage);
     }
 }
