@@ -1,4 +1,4 @@
-package ac.knu.likeknujobserver.citybus.model;
+package ac.knu.likeknujobserver.citybus.domain;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

@@ -2,7 +2,7 @@ package ac.knu.likeknujobserver.citybus.service;
 
 import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
-import ac.knu.likeknujobserver.citybus.model.CityBus;
+import ac.knu.likeknujobserver.citybus.domain.CityBus;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

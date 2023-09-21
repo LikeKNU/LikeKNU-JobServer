@@ -1,4 +1,4 @@
-package ac.knu.likeknujobserver.announcement.model;
+package ac.knu.likeknujobserver.announcement.domain;
 
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
 import ac.knu.likeknujobserver.announcement.value.Category;

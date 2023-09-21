@@ -1,6 +1,6 @@
-package ac.knu.likeknujobserver.citybus.model;
+package ac.knu.likeknujobserver.citybus.domain;
 
-import ac.knu.likeknujobserver.citybus.model.value.RouteType;
+import ac.knu.likeknujobserver.citybus.domain.value.RouteType;
 import ac.knu.likeknujobserver.common.EntityGraphNames;
 import ac.knu.likeknujobserver.common.value.Campus;
 import jakarta.persistence.Entity;

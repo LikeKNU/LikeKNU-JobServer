@@ -2,7 +2,7 @@ package ac.knu.likeknujobserver.announcement.service;
 
 import ac.knu.likeknujobserver.announcement.api.OpenAI;
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
-import ac.knu.likeknujobserver.announcement.model.Announcement;
+import ac.knu.likeknujobserver.announcement.domain.Announcement;
 import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.announcement.value.Tag;
