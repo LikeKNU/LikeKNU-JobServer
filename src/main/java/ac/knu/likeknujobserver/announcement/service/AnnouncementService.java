@@ -56,7 +56,6 @@ public class AnnouncementService {
         announcementsByCategory.keySet().stream()
                 .flatMap(category -> announcementsByCategory.get(category).stream()
                         .map(AnnouncementMessage::of))
-                .peek(announcementMessage -> log.info("announcementMessage = {}", announcementMessage))
                 .forEach(announcementMessage -> {
                     Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
                     announcementMessages.offer(announcementMessage);
