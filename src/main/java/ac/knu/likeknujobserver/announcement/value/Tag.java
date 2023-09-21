@@ -2,6 +2,8 @@ package ac.knu.likeknujobserver.announcement.value;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum Tag {
 
@@ -20,5 +22,12 @@ public enum Tag {
 
     Tag(String tagName) {
         this.tagName = tagName;
+    }
+
+    public static Tag of(String content) {
+        return Arrays.stream(Tag.values())
+                .filter(tag -> tag.tagName.equals(content))
+                .findFirst()
+                .orElse(ETC);
     }
 }
