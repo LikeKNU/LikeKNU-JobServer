@@ -5,11 +5,17 @@ import ac.knu.likeknujobserver.announcement.value.Tag;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.notification.domain.Device;
 import ac.knu.likeknujobserver.notification.repository.DeviceRepository;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.MulticastMessage;
+import com.google.firebase.messaging.Notification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Transactional(readOnly = true)
@@ -33,13 +39,28 @@ public class NotificationService {
             subscribedDevices = deviceRepository.findByCampusAndSubscribeTags(campus, tags);
         }
 
-        subscribedDevices.forEach(device -> {
-            sendFcmCloudMessage(device, announcement);
-            // TODO Save notifications
-        });
+        List<String> tokens = subscribedDevices.stream()
+                .map(Device::getFcmToken)
+                .filter(Objects::nonNull)
+                .toList();
+        sendFcmCloudMessage(tokens, announcement.getTag(), announcement.getAnnouncementUrl());
+        // TODO Save notifications
     }
 
-    private void sendFcmCloudMessage(Device device, Announcement announcement) {
-        // TODO Send FCM cloud messages
+    private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, String announcementUrl) {
+        MulticastMessage multicastMessage = MulticastMessage.builder()
+                .setNotification(Notification.builder()
+                        .setTitle(String.format("[%s] 신규 공지사항", tag.getTagName()))
+                        .setBody("새로운 공지사항이 등록되었어요!")
+                        .build())
+                .putData("announcement_url", announcementUrl)
+                .addAllTokens(subscribedDevices)
+                .build();
+
+        try {
+            BatchResponse batchResponse = FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage);
+        } catch (FirebaseMessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
