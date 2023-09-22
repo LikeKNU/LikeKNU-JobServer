@@ -43,17 +43,17 @@ public class NotificationService {
                 .map(Device::getFcmToken)
                 .filter(Objects::nonNull)
                 .toList();
-        sendFcmCloudMessage(tokens, announcement.getTag(), announcement.getAnnouncementUrl());
+        sendFcmCloudMessage(tokens, announcement.getTag(), announcement);
         // TODO Save notifications
     }
 
-    private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, String announcementUrl) {
+    private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, Announcement announcement) {
         MulticastMessage multicastMessage = MulticastMessage.builder()
                 .setNotification(Notification.builder()
-                        .setTitle(String.format("[%s] 신규 공지사항", tag.getTagName()))
-                        .setBody("새로운 공지사항이 등록되었어요!")
+                        .setTitle(String.format("[%s] 새로운 공지사항", tag.getTagName()))
+                        .setBody(announcement.getAnnouncementTitle())
                         .build())
-                .putData("announcement_url", announcementUrl)
+                .putData("announcement_url", announcement.getAnnouncementUrl())
                 .addAllTokens(subscribedDevices)
                 .build();
 
