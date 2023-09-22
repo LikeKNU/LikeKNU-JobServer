@@ -1,12 +1,11 @@
 package ac.knu.likeknujobserver.citybus.domain;
 
+import ac.knu.likeknujobserver.common.BaseEntity;
+import ac.knu.likeknujobserver.common.value.Domain;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -21,18 +20,16 @@ import java.util.List;
 @Getter
 @Table(name = "city_bus")
 @Entity
-public class CityBus {
+public class CityBus extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Column(nullable = false)
     private String busNumber;
 
     private String busName;
 
     private String busColor;
 
+    @Column(nullable = false)
     private String busStop;
 
     private Boolean isRealtime;
@@ -49,10 +46,12 @@ public class CityBus {
     private List<LocalTime> arrivalTimes = new ArrayList<>();
 
     protected CityBus() {
+        super(Domain.CITY_BUS);
     }
 
     @Builder
     public CityBus(String busNumber, String busName, String busColor, String busStop, boolean isRealtime) {
+        this();
         this.busNumber = busNumber;
         this.busName = busName;
         this.busColor = busColor;
