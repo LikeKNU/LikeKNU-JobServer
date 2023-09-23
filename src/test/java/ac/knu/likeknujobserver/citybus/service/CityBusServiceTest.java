@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.citybus.service;
 
-import ac.knu.likeknujobserver.citybus.dto.BusArrivalTime;
+import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
 import ac.knu.likeknujobserver.citybus.model.CityBus;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
@@ -35,12 +35,12 @@ class CityBusServiceTest {
     @Test
     void updateRealtimeBusArrivalTime() throws Exception {
         // given                                              
-        List<BusArrivalTime> busArrivalTimes = List.of(
-                BusArrivalTime.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("100").arrivalTime(LocalTime.of(9, 0)).build(),
-                BusArrivalTime.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("100").arrivalTime(LocalTime.of(9, 10)).build(),
-                BusArrivalTime.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("200").arrivalTime(LocalTime.of(9, 3)).build(),
-                BusArrivalTime.builder().departureStop(DepartureStop.DUJEONG_STATION_ENTRANCE).busName("100").arrivalTime(LocalTime.of(10, 0)).build(),
-                BusArrivalTime.builder().departureStop(DepartureStop.DUJEONG_STATION_ENTRANCE).busName("100").arrivalTime(LocalTime.of(10, 10)).build()
+        List<BusArrivalTimeMessage> busArrivalTimes = List.of(
+                BusArrivalTimeMessage.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("100").arrivalTime(LocalTime.of(9, 0)).build(),
+                BusArrivalTimeMessage.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("100").arrivalTime(LocalTime.of(9, 10)).build(),
+                BusArrivalTimeMessage.builder().departureStop(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY).busName("200").arrivalTime(LocalTime.of(9, 3)).build(),
+                BusArrivalTimeMessage.builder().departureStop(DepartureStop.DUJEONG_STATION_ENTRANCE).busName("100").arrivalTime(LocalTime.of(10, 0)).build(),
+                BusArrivalTimeMessage.builder().departureStop(DepartureStop.DUJEONG_STATION_ENTRANCE).busName("100").arrivalTime(LocalTime.of(10, 10)).build()
         );
 
         List<CityBus> cityBuses = List.of(

@@ -6,17 +6,17 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-public class BusArrivalTime {
+public class BusArrivalTimeMessage {
 
     private String busName;
     private DepartureStop departureStop;
     private LocalTime arrivalTime;
 
-    protected BusArrivalTime() {
+    protected BusArrivalTimeMessage() {
     }
 
     @Builder
-    public BusArrivalTime(String busName, DepartureStop departureStop, LocalTime arrivalTime) {
+    public BusArrivalTimeMessage(String busName, DepartureStop departureStop, LocalTime arrivalTime) {
         this.busName = busName;
         this.departureStop = departureStop;
         this.arrivalTime = arrivalTime;
