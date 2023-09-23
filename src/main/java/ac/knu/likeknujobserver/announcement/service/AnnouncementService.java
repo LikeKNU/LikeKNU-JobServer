@@ -1,11 +1,12 @@
 package ac.knu.likeknujobserver.announcement.service;
 
 import ac.knu.likeknujobserver.announcement.api.OpenAI;
+import ac.knu.likeknujobserver.announcement.domain.Announcement;
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
-import ac.knu.likeknujobserver.announcement.model.Announcement;
 import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.announcement.value.Tag;
+import ac.knu.likeknujobserver.notification.service.NotificationService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,12 @@ public class AnnouncementService {
     private static final Map<Category, Queue<AnnouncementMessage>> ANNOUNCEMENT_CACHE = new ConcurrentHashMap<>();
 
     private final AnnouncementRepository announcementRepository;
+    private final NotificationService notificationService;
     private final OpenAI openAI;
 
-    public AnnouncementService(AnnouncementRepository announcementRepository, OpenAI openAI) {
+    public AnnouncementService(AnnouncementRepository announcementRepository, NotificationService notificationService, OpenAI openAI) {
         this.announcementRepository = announcementRepository;
+        this.notificationService = notificationService;
         this.openAI = openAI;
     }
 
@@ -56,7 +59,6 @@ public class AnnouncementService {
         announcementsByCategory.keySet().stream()
                 .flatMap(category -> announcementsByCategory.get(category).stream()
                         .map(AnnouncementMessage::of))
-                .peek(announcementMessage -> log.info("announcementMessage = {}", announcementMessage))
                 .forEach(announcementMessage -> {
                     Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
                     announcementMessages.offer(announcementMessage);
@@ -73,7 +75,8 @@ public class AnnouncementService {
         Tag tag = abstractTagOfAnnouncement(announcementMessage);
         Announcement announcement = Announcement.of(announcementMessage, tag);
         announcementRepository.save(announcement);
-        // TODO Push notifications service call
+
+        notificationService.sendPushNotificationOfAnnouncement(announcement);
     }
 
     private boolean isAlreadyCollectedAnnouncement(AnnouncementMessage announcementMessage) {

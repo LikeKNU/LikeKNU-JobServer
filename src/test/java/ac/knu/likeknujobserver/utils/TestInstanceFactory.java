@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.utils;
 
-import ac.knu.likeknujobserver.announcement.model.Announcement;
+import ac.knu.likeknujobserver.announcement.domain.Announcement;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.common.value.Campus;
 

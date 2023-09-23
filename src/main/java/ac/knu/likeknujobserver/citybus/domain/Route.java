@@ -1,55 +1,44 @@
-package ac.knu.likeknujobserver.citybus.model;
+package ac.knu.likeknujobserver.citybus.domain;
 
-import ac.knu.likeknujobserver.citybus.model.value.RouteType;
-import ac.knu.likeknujobserver.common.EntityGraphNames;
+import ac.knu.likeknujobserver.citybus.domain.value.RouteType;
+import ac.knu.likeknujobserver.common.BaseEntity;
 import ac.knu.likeknujobserver.common.value.Campus;
+import ac.knu.likeknujobserver.common.value.Domain;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Objects;
 
 @Getter
-@NamedEntityGraphs(
-        value = {
-                @NamedEntityGraph(
-                        name = EntityGraphNames.ROUTE_BUSES,
-                        attributeNodes = @NamedAttributeNode(value = "buses")
-                )
-        }
-)
 @Table(name = "route")
 @Entity
-public class Route {
+public class Route extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private RouteType routeType;
 
+    @Column(nullable = false)
     private String departureStop;
 
+    @Column(nullable = false)
     private String arrivalStop;
 
+    @Column(nullable = false)
     private String origin;
 
+    @Column(nullable = false)
     private String destination;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Campus campus;
 
@@ -60,30 +49,17 @@ public class Route {
     private List<CityBus> buses;
 
     protected Route() {
+        super(Domain.ROUTE);
     }
 
     @Builder
     protected Route(RouteType routeType, String departureStop, String arrivalStop, String origin, String destination, Campus campus) {
+        this();
         this.routeType = routeType;
         this.departureStop = departureStop;
         this.arrivalStop = arrivalStop;
         this.origin = origin;
         this.destination = destination;
         this.campus = campus;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-
-        Route route = (Route) object;
-
-        return Objects.equals(id, route.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }

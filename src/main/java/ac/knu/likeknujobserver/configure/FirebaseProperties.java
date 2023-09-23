@@ -7,11 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "redis")
 @Component
-public class RedisProperties {
+@ConfigurationProperties(prefix = "firebase")
+public class FirebaseProperties {
 
-    private String host;
-    private int port;
-    private String password;
+    private String keyPath;
 }
