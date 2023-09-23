@@ -1,6 +1,7 @@
 package ac.knu.likeknujobserver.citybus.domain;
 
 import ac.knu.likeknujobserver.common.BaseEntity;
+import ac.knu.likeknujobserver.common.EntityGraphNames;
 import ac.knu.likeknujobserver.common.value.Domain;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -9,6 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@NamedEntityGraphs(
+        value = {
+                @NamedEntityGraph(
+                        name = EntityGraphNames.BUS_ARRIVAL_TIMES,
+                        attributeNodes = @NamedAttributeNode(value = "arrivalTimes")
+                )
+        }
+)
 @Table(name = "city_bus")
 @Entity
 public class CityBus extends BaseEntity {

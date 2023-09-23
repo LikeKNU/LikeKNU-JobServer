@@ -3,14 +3,13 @@ package ac.knu.likeknujobserver.notification.repository;
 import ac.knu.likeknujobserver.announcement.value.Tag;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.notification.domain.Device;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Set;
 
-public interface DeviceRepository extends CrudRepository<Device, String> {
+public interface DeviceRepository extends JpaRepository<Device, String> {
 
-    List<Device> findBySubscribeTags(Set<Tag> subscribeTags);
+    List<Device> findBySubscribeTagsContaining(Tag tag);
 
-    List<Device> findByCampusAndSubscribeTags(Campus campus, Set<Tag> subscribeTags);
+    List<Device> findByCampusAndSubscribeTagsContaining(Campus campus, Tag tag);
 }

@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS bus_route
     bus_id   VARCHAR(60) NOT NULL,
     route_id VARCHAR(60) NOT NULL,
     PRIMARY KEY (bus_id, route_id),
-    FOREIGN KEY (bus_id) REFERENCES city_bus (id),
-    FOREIGN KEY (route_id) REFERENCES route (id)
+    FOREIGN KEY (bus_id) REFERENCES city_bus (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (route_id) REFERENCES route (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS bus_time
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS bus_time
     bus_id       VARCHAR(60) NOT NULL,
     arrival_time TIME        NOT NULL,
     PRIMARY KEY (bus_id, arrival_time),
-    FOREIGN KEY (bus_id) REFERENCES city_bus (id) ON DELETE CASCADE
+    FOREIGN KEY (bus_id) REFERENCES city_bus (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS cafeteria
@@ -68,6 +68,38 @@ CREATE TABLE IF NOT EXISTS menu
     menus        VARCHAR(300) NOT NULL,
     meal_type    VARCHAR(15)  NOT NULL,
     cafeteria_id VARCHAR(60)  NOT NULL,
-    FOREIGN KEY (cafeteria_id) REFERENCES cafeteria (id)
+    FOREIGN KEY (cafeteria_id) REFERENCES cafeteria (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS device
+(
+    id            VARCHAR(36) NOT NULL PRIMARY KEY,
+    fcm_token     VARCHAR(60) UNIQUE,
+    campus        VARCHAR(10) NOT NULL,
+    registered_at DATETIME    NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS subscribe
+(
+    device_id VARCHAR(36) NOT NULL,
+    tag       VARCHAR(20) NOT NULL,
+    PRIMARY KEY (device_id, tag),
+    FOREIGN KEY (device_id) REFERENCES device (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notification
+(
+    id                 VARCHAR(60)  NOT NULL PRIMARY KEY,
+    notification_title VARCHAR(80)  NOT NULL,
+    notification_body  VARCHAR(150) NOT NULL,
+    notification_date  DATETIME     NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS device_notification
+(
+    device_id       VARCHAR(36) NOT NULL,
+    notification_id VARCHAR(60) NOT NULL,
+    PRIMARY KEY (device_id, notification_id),
+    FOREIGN KEY (device_id) REFERENCES device (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (notification_id) REFERENCES notification (id) ON UPDATE CASCADE ON DELETE CASCADE
+);

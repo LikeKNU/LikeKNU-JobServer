@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Transactional(readOnly = true)
 @Service
@@ -31,12 +30,12 @@ public class NotificationService {
     @Async
     public void pushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();
-        Set<Tag> tags = Set.of(announcement.getTag());
+        Tag tag = announcement.getTag();
         List<Device> subscribedDevices;
         if (campus.equals(Campus.ALL)) {
-            subscribedDevices = deviceRepository.findBySubscribeTags(tags);
+            subscribedDevices = deviceRepository.findBySubscribeTagsContaining(tag);
         } else {
-            subscribedDevices = deviceRepository.findByCampusAndSubscribeTags(campus, tags);
+            subscribedDevices = deviceRepository.findByCampusAndSubscribeTagsContaining(campus, tag);
         }
 
         List<String> tokens = subscribedDevices.stream()

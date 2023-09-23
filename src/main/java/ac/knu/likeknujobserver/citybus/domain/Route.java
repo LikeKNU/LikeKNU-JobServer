@@ -2,7 +2,6 @@ package ac.knu.likeknujobserver.citybus.domain;
 
 import ac.knu.likeknujobserver.citybus.domain.value.RouteType;
 import ac.knu.likeknujobserver.common.BaseEntity;
-import ac.knu.likeknujobserver.common.EntityGraphNames;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.common.value.Domain;
 import jakarta.persistence.Column;
@@ -12,9 +11,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,14 +18,6 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-@NamedEntityGraphs(
-        value = {
-                @NamedEntityGraph(
-                        name = EntityGraphNames.ROUTE_BUSES,
-                        attributeNodes = @NamedAttributeNode(value = "buses")
-                )
-        }
-)
 @Table(name = "route")
 @Entity
 public class Route extends BaseEntity {

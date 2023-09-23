@@ -6,6 +6,7 @@ import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
 import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
 import ac.knu.likeknujobserver.announcement.value.Category;
 import ac.knu.likeknujobserver.announcement.value.Tag;
+import ac.knu.likeknujobserver.notification.service.NotificationService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,12 @@ public class AnnouncementService {
     private static final Map<Category, Queue<AnnouncementMessage>> ANNOUNCEMENT_CACHE = new ConcurrentHashMap<>();
 
     private final AnnouncementRepository announcementRepository;
+    private final NotificationService notificationService;
     private final OpenAI openAI;
 
-    public AnnouncementService(AnnouncementRepository announcementRepository, OpenAI openAI) {
+    public AnnouncementService(AnnouncementRepository announcementRepository, NotificationService notificationService, OpenAI openAI) {
         this.announcementRepository = announcementRepository;
+        this.notificationService = notificationService;
         this.openAI = openAI;
     }
 
@@ -72,7 +75,8 @@ public class AnnouncementService {
         Tag tag = abstractTagOfAnnouncement(announcementMessage);
         Announcement announcement = Announcement.of(announcementMessage, tag);
         announcementRepository.save(announcement);
-        // TODO Push notifications service call
+
+        notificationService.pushNotificationOfAnnouncement(announcement);
     }
 
     private boolean isAlreadyCollectedAnnouncement(AnnouncementMessage announcementMessage) {
