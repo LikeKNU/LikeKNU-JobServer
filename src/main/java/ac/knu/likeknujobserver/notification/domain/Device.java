@@ -73,4 +73,8 @@ public class Device {
         this.campus = campus;
         this.registeredAt = registeredAt;
     }
+
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+    }
 }

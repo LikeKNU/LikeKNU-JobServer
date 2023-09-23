@@ -76,7 +76,7 @@ public class AnnouncementService {
         Announcement announcement = Announcement.of(announcementMessage, tag);
         announcementRepository.save(announcement);
 
-        notificationService.pushNotificationOfAnnouncement(announcement);
+        notificationService.sendPushNotificationOfAnnouncement(announcement);
     }
 
     private boolean isAlreadyCollectedAnnouncement(AnnouncementMessage announcementMessage) {
