@@ -16,6 +16,6 @@ public class MenuConsumer {
 
     @RabbitListener(queues = "${rabbitmq.menu-queue-name}")
     public void consumeAnnouncementMessage(@Valid MenuMessage menuMessage) {
-
+        menuService.updateMenu(menuMessage);
     }
 }

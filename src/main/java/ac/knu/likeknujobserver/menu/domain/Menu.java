@@ -3,6 +3,7 @@ package ac.knu.likeknujobserver.menu.domain;
 import ac.knu.likeknujobserver.common.BaseEntity;
 import ac.knu.likeknujobserver.common.value.Domain;
 import ac.knu.likeknujobserver.menu.domain.value.MealType;
+import ac.knu.likeknujobserver.menu.dto.MenuMessage;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Menu extends BaseEntity {
     private LocalDate menuDate;
 
     @JoinColumn(name = "cafeteria_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Cafeteria cafeteria;
 
     protected Menu() {
@@ -38,5 +40,14 @@ public class Menu extends BaseEntity {
         this.mealType = mealType;
         this.menuDate = menuDate;
         this.cafeteria = cafeteria;
+    }
+
+    public static Menu of(MenuMessage menuMessage) {
+        return Menu.builder()
+                .cafeteria(menuMessage.getCafeteria())
+                .menus(menuMessage.getMenus())
+                .mealType(menuMessage.getMealType())
+                .menuDate(menuMessage.getDate())
+                .build();
     }
 }
