@@ -3,6 +3,7 @@ package ac.knu.likeknujobserver.menu.dto;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
+import ac.knu.likeknujobserver.menu.domain.value.CafeteriaName;
 import ac.knu.likeknujobserver.menu.domain.value.MealType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -25,10 +26,10 @@ public class MenuMessage {
     private Campus campus;
 
     @NotBlank
-    private Cafeteria cafeteria;
+    private CafeteriaName cafeteria;
 
     @Builder
-    public MenuMessage(String menus, LocalDate date, MealType mealType, Campus campus, Cafeteria cafeteria) {
+    public MenuMessage(String menus, LocalDate date, MealType mealType, Campus campus, CafeteriaName cafeteria) {
         this.menus = menus;
         this.date = date;
         this.mealType = mealType;
@@ -41,7 +42,7 @@ public class MenuMessage {
                 .menus(menu.getMenus())
                 .mealType(menu.getMealType())
                 .campus(menu.getCafeteria().getCampus())
-                .cafeteria(menu.getCafeteria())
+                .cafeteria(menu.getCafeteria().getCafeteriaName())
                 .date(menu.getMenuDate())
                 .build();
     }
