@@ -23,18 +23,22 @@ public class MenuService {
 
     private static final Map<Campus, Queue<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
 
+    @PostConstruct
+    void init() {
+        Stream.of(Campus.values()).forEach((Campus c) -> {
+            if(!MENU_CACHE.containsKey(c))
+                MENU_CACHE.put(c, new ConcurrentLinkedQueue<>());
+            else;
+            //findbyid
+        });
+    }
+
     public void updateMenu(MenuMessage menuMessage) {
         if(existMenuMessage(menuMessage))
             return;
 
         cachingMenuMessage(menuMessage);
         menuRepository.save(Menu.of(menuMessage));
-    }
-
-    @PostConstruct
-    void init() {
-        Stream.of(Campus.values()).forEach((Campus c) ->
-                MENU_CACHE.put(c, new ConcurrentLinkedQueue<>()));
     }
 
     private boolean existMenuMessage(MenuMessage menuMessage) {
@@ -51,8 +55,7 @@ public class MenuService {
 
         @Scheduled(cron = "0 0 12 ? ? THU *")
         public void scheduledMenuCache() {
-            for(Campus campus : Campus.values())
-                MENU_CACHE.get(campus).clear();
+            Stream.of(Campus.values()).forEach((Campus c) -> MENU_CACHE.get(c).clear());
         }
     }
 
