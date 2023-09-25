@@ -1,6 +1,5 @@
 package ac.knu.likeknujobserver.menu.service;
 
-import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
 import ac.knu.likeknujobserver.menu.domain.value.CacheCamCafe;
@@ -75,7 +74,7 @@ public class MenuService {
         /**
          * 매주 목요일 캐시 초기화
          */
-        @Scheduled(cron = "0 0 12 ? ? THU *")
+        @Scheduled(cron = "0 0 18 * * THU")
         public void scheduledMenuCache() {
             Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> MENU_CACHE.get(c).clear());
         }
