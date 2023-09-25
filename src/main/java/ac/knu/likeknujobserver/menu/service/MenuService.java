@@ -55,7 +55,8 @@ public class MenuService {
             return;
 
         cachingMenuMessage(menuMessage);
-        Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(menuMessage.getCampus(), menuMessage.getCafeteria());
+        Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(menuMessage.getCampus(), menuMessage.getCafeteria())
+                .orElseThrow(NullPointerException::new);
         menuRepository.save(Menu.of(menuMessage, cafeteria));
     }
 
