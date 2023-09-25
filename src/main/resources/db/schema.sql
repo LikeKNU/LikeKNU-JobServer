@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS menu
     id           VARCHAR(60)  NOT NULL PRIMARY KEY,
     menus        VARCHAR(300) NOT NULL,
     meal_type    VARCHAR(15)  NOT NULL,
+    menu_date    DATE         NOT NULL,
     cafeteria_id VARCHAR(60)  NOT NULL,
     FOREIGN KEY (cafeteria_id) REFERENCES cafeteria (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
