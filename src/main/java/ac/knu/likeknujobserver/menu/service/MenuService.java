@@ -73,9 +73,11 @@ public class MenuService {
     static class MenuCacheScheduler {
 
         /**
-         * 매주 목요일 캐시 초기화
+         * 매주 금요일 18시 캐시 초기화
+         *      크롤러 작동 요일: 일 ~ 목
+         *      크롤러 작동 시간: 9 ~ 19
          */
-        @Scheduled(cron = "0 0 18 * * THU")
+        @Scheduled(cron = "0 0 18 * * FRI")
         public void scheduledMenuCache() {
             Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> MENU_CACHE.get(c).clear());
         }
