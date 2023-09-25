@@ -3,6 +3,7 @@ package ac.knu.likeknujobserver.menu.service;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
+import ac.knu.likeknujobserver.menu.domain.value.CacheCamCafe;
 import ac.knu.likeknujobserver.menu.dto.MenuMessage;
 import ac.knu.likeknujobserver.menu.repository.CafeteriaRepository;
 import ac.knu.likeknujobserver.menu.repository.MenuRepository;
@@ -27,11 +28,11 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final CafeteriaRepository cafeteriaRepository;
 
-    private static final Map<Campus, Queue<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
+    private static final Map<CacheCamCafe, Queue<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
-        Stream.of(Campus.values()).forEach((Campus c) -> {
+        Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> {
             if(!MENU_CACHE.containsKey(c))
                 MENU_CACHE.put(c, new ConcurrentLinkedQueue<>());
             importFromMenuRepositoryAndCache(c);
@@ -42,7 +43,7 @@ public class MenuService {
      * db에서 이번주 일요일부터 menu를 가져와 캐시에 저장
      * @param c
      */
-    private void importFromMenuRepositoryAndCache(Campus c) {
+    private void importFromMenuRepositoryAndCache(CacheCamCafe c) {
         LocalDate thisSunday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         List<Menu> menusByMenuDateAfter = menuRepository.findMenusByMenuDateAfter(thisSunday);
         Queue<MenuMessage> menuMessages = MENU_CACHE.get(c);
@@ -60,11 +61,11 @@ public class MenuService {
     }
 
     private boolean existMenuMessage(MenuMessage menuMessage) {
-        return MENU_CACHE.get(menuMessage.getCampus()).contains(menuMessage);
+        return MENU_CACHE.get(CacheCamCafe.of(menuMessage)).contains(menuMessage);
     }
 
     private void cachingMenuMessage(MenuMessage menuMessage) {
-        Queue<MenuMessage> menuMessages = MENU_CACHE.get(menuMessage.getCampus());
+        Queue<MenuMessage> menuMessages = MENU_CACHE.get(CacheCamCafe.of(menuMessage));
         menuMessages.add(menuMessage);
     }
 
@@ -76,7 +77,7 @@ public class MenuService {
          */
         @Scheduled(cron = "0 0 12 ? ? THU *")
         public void scheduledMenuCache() {
-            Stream.of(Campus.values()).forEach((Campus c) -> MENU_CACHE.get(c).clear());
+            Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> MENU_CACHE.get(c).clear());
         }
     }
 
