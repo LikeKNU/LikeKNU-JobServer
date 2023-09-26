@@ -104,3 +104,29 @@ CREATE TABLE IF NOT EXISTS device_notification
     FOREIGN KEY (device_id) REFERENCES device (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (notification_id) REFERENCES notification (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS shuttle_bus
+(
+    id           VARCHAR(60) NOT NULL PRIMARY KEY,
+    shuttle_name VARCHAR(50) NOT NULL,
+    origin       VARCHAR(20) NOT NULL,
+    destination  VARCHAR(20) NOT NULL,
+    shuttle_type VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS shuttle_time
+(
+    bus_id       VARCHAR(60) NOT NULL,
+    arrival_time TIME        NOT NULL,
+    arrival_stop VARCHAR(20) NOT NULL,
+    PRIMARY KEY (bus_id, arrival_time, arrival_stop)
+);
+
+CREATE TABLE IF NOT EXISTS academic_calendar
+(
+    id         VARCHAR(60) NOT NULL PRIMARY KEY,
+    contents   VARCHAR(30) NOT NULL,
+    start_date DATETIME    NOT NULL,
+    end_date   DATETIME    NOT NULL,
+    UNIQUE schedule_unique (contents, start_date, end_date)
+);
