@@ -105,21 +105,30 @@ CREATE TABLE IF NOT EXISTS device_notification
     FOREIGN KEY (notification_id) REFERENCES notification (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS shuttle_bus
+CREATE TABLE IF NOT EXISTS shuttle
 (
     id           VARCHAR(60) NOT NULL PRIMARY KEY,
-    shuttle_name VARCHAR(50) NOT NULL,
     origin       VARCHAR(20) NOT NULL,
     destination  VARCHAR(20) NOT NULL,
     shuttle_type VARCHAR(20) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS shuttle_bus
+(
+    id           VARCHAR(60) NOT NULL PRIMARY KEY,
+    shuttle_name VARCHAR(20) NOT NULL,
+    shuttle_id   VARCHAR(60) NOT NULL,
+    FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS shuttle_time
 (
-    bus_id       VARCHAR(60) NOT NULL,
+    id           BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    arrival_stop VARCHAR(30) NOT NULL,
     arrival_time TIME        NOT NULL,
-    arrival_stop VARCHAR(20) NOT NULL,
-    PRIMARY KEY (bus_id, arrival_time, arrival_stop)
+    sequence     INT         NOT NULL,
+    bus_id       VARCHAR(60) NOT NULL,
+    FOREIGN KEY (bus_id) REFERENCES shuttle_bus (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS academic_calendar
@@ -129,4 +138,12 @@ CREATE TABLE IF NOT EXISTS academic_calendar
     start_date DATETIME    NOT NULL,
     end_date   DATETIME    NOT NULL,
     UNIQUE schedule_unique (contents, start_date, end_date)
+);
+
+CREATE TABLE IF NOT EXISTS shuttle_campus
+(
+    shuttle_id VARCHAR(60) NOT NULL,
+    campus     VARCHAR(10) NOT NULL,
+    PRIMARY KEY (shuttle_id, campus),
+    FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
