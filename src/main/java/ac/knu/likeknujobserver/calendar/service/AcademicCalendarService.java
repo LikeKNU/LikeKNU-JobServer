@@ -36,6 +36,9 @@ public class AcademicCalendarService {
     }
 
     private boolean existCalendarMessage(AcademicCalendarMessage calendarMessage) {
-        return CALENDAR_CACHE.get(calendarMessage.getStartDate().getYear()).containsValue(calendarMessage);
+        return CALENDAR_CACHE
+                .get(calendarMessage.getStartDate().getYear())
+                .get(calendarMessage.getStartDate().getMonthValue())
+                .contains(calendarMessage);
     }
 }
