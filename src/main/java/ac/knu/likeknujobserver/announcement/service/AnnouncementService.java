@@ -90,7 +90,7 @@ public class AnnouncementService {
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {
-        return announcementMessage.getCategory().equals(Category.SCHOOL_NEWS)
+        return announcementMessage.getCategory().equals(Category.STUDENT_NEWS)
                 ? openAI.abstractTagOfAnnouncement(announcementMessage.getTitle())
                 : Tag.valueOf(announcementMessage.getCategory().name());
     }
