@@ -16,5 +16,6 @@ public class AcademicCalendarConsumer {
 
     @RabbitListener(queues = "${rabbitmq.calendar-queue-name}")
     public void consumeAcademicCalendarMessage(@Valid AcademicCalendarMessage academicCalendarMessage) {
+        academicCalendarService.updateCalendar(academicCalendarMessage);
     }
 }
