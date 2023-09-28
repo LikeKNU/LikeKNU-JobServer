@@ -31,8 +31,8 @@ public class AcademicCalendarMessage {
     }
 
     private boolean isYearRight() {
-        int now_year = LocalDate.now().getYear();
-        return (startDate.getYear() <= now_year) && (endDate.getYear() >= now_year);
+        int nowYear = LocalDate.now().getYear();
+        return (startDate.getYear() <= nowYear) && (endDate.getYear() >= nowYear);
     }
 
     private void modifyDateCalendarMessage() {
