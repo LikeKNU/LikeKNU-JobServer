@@ -26,14 +26,12 @@ public class AcademicCalendarService {
     void init() {
         int nowYear = LocalDate.now().getYear();
 
-        if(CALENDAR_CACHE.containsKey(nowYear)) {
-            Map<Integer, Queue<AcademicCalendarMessage>> messageQueue = new ConcurrentHashMap<>();
-            IntStream.rangeClosed(1, 12)
-                    .forEach(i -> messageQueue.put(i, new ConcurrentLinkedQueue<>()));
+        Map<Integer, Queue<AcademicCalendarMessage>> messageQueue = new ConcurrentHashMap<>();
+        IntStream.rangeClosed(1, 12)
+                .forEach(i -> messageQueue.put(i, new ConcurrentLinkedQueue<>()));
 
-            CALENDAR_CACHE.put(nowYear, messageQueue);
-            CALENDAR_CACHE.put(nowYear + 1, messageQueue);
-        }
+        CALENDAR_CACHE.put(nowYear, messageQueue);
+        CALENDAR_CACHE.put(nowYear + 1, messageQueue);
     }
 
     public void updateCalendar(AcademicCalendarMessage calendarMessage) {

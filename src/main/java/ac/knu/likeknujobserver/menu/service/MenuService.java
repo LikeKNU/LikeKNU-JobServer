@@ -34,8 +34,7 @@ public class MenuService {
     @PostConstruct
     void init() {
         Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> {
-            if (!MENU_CACHE.containsKey(c))
-                MENU_CACHE.put(c, new ConcurrentLinkedQueue<>());
+            MENU_CACHE.put(c, new ConcurrentLinkedQueue<>());
             importFromMenuRepositoryAndCache(c);
         });
     }
