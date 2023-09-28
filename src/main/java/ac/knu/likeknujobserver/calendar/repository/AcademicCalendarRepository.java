@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface AcademicCalendarRepository extends JpaRepository<AcademicCalendar, String> {
 
-    List<AcademicCalendar> findByStartDateAfter(LocalDate startDate);
+    List<AcademicCalendar> findByStartDateGreaterThanEqual(LocalDate startDate);
 }
