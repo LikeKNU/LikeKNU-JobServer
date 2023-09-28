@@ -24,12 +24,15 @@ public class AcademicCalendarService {
 
     @PostConstruct
     void init() {
-        if(CALENDAR_CACHE.containsKey(LocalDate.now().getYear())) {
+        int nowYear = LocalDate.now().getYear();
+
+        if(CALENDAR_CACHE.containsKey(nowYear)) {
             Map<Integer, Queue<AcademicCalendarMessage>> messageQueue = new ConcurrentHashMap<>();
             IntStream.rangeClosed(1, 12)
                     .forEach(i -> messageQueue.put(i, new ConcurrentLinkedQueue<>()));
 
-            CALENDAR_CACHE.put(LocalDate.now().getYear(), messageQueue);
+            CALENDAR_CACHE.put(nowYear, messageQueue);
+            CALENDAR_CACHE.put(nowYear + 1, messageQueue);
         }
     }
 
@@ -41,6 +44,10 @@ public class AcademicCalendarService {
 
         cachingCalendarMessage(calendarMessage);
         academicCalendarRepository.save(AcademicCalendar.of(calendarMessage));
+    }
+
+    private void importFromCalendarRepositoryAndCache() {
+
     }
 
     private void cachingCalendarMessage(AcademicCalendarMessage calendarMessage) {
