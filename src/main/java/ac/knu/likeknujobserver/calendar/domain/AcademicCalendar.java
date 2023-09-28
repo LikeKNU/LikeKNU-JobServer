@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class AcademicCalendar extends BaseEntity {
 
     @Column
-    private String content;
+    private String contents;
 
     @Column
     private LocalDate startDate;
@@ -30,16 +30,16 @@ public class AcademicCalendar extends BaseEntity {
     }
 
     @Builder
-    public AcademicCalendar(String content, LocalDate startDate, LocalDate endDate) {
+    public AcademicCalendar(String contents, LocalDate startDate, LocalDate endDate) {
         this();
-        this.content = content;
+        this.contents = contents;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
     public static AcademicCalendar of(AcademicCalendarMessage academicCalendarMessage) {
         return AcademicCalendar.builder()
-                .content(academicCalendarMessage.getContents())
+                .contents(academicCalendarMessage.getContents())
                 .startDate(academicCalendarMessage.getStartDate())
                 .endDate(academicCalendarMessage.getEndDate())
                 .build();
