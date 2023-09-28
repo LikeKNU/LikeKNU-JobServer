@@ -26,7 +26,7 @@ public class AcademicCalendar extends BaseEntity {
     private LocalDate endDate;
 
     protected AcademicCalendar() {
-        super(Domain.CALENDAR);
+        super(Domain.ACADEMIC_CALENDAR);
     }
 
     @Builder
