@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +33,8 @@ public class AcademicCalendarService {
 
         CALENDAR_CACHE.put(nowYear, messageQueue);
         CALENDAR_CACHE.put(nowYear + 1, messageQueue);
+
+        importFromCalendarRepositoryAndCache();
     }
 
     public void updateCalendar(AcademicCalendarMessage calendarMessage) {
@@ -45,14 +48,20 @@ public class AcademicCalendarService {
     }
 
     private void importFromCalendarRepositoryAndCache() {
+        List<AcademicCalendar> academicCalendarList = academicCalendarRepository.findByStartDateGreaterThanEqual(LocalDate.now());
 
+        academicCalendarList.forEach((AcademicCalendar ac) -> {
+            AcademicCalendarMessage acm = AcademicCalendarMessage.of(ac);
+            getQueueFromCache(acm).offer(acm);
+        });
+    }
+
+    private Queue<AcademicCalendarMessage> getQueueFromCache(AcademicCalendarMessage calendarMessage) {
+        return CALENDAR_CACHE.get(calendarMessage.getStartDate().getYear()).get(calendarMessage.getStartDate().getMonthValue());
     }
 
     private void cachingCalendarMessage(AcademicCalendarMessage calendarMessage) {
-        Queue<AcademicCalendarMessage> messageQueue = CALENDAR_CACHE
-                .get(calendarMessage.getStartDate().getYear())
-                .get(calendarMessage.getStartDate().getMonthValue());
-
+        Queue<AcademicCalendarMessage> messageQueue = getQueueFromCache(calendarMessage);
         messageQueue.offer(calendarMessage);
     }
 
