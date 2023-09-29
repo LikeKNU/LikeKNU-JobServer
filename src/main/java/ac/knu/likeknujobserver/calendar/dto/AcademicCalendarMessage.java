@@ -1,5 +1,6 @@
 package ac.knu.likeknujobserver.calendar.dto;
 
+import ac.knu.likeknujobserver.calendar.domain.AcademicCalendar;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,14 @@ public class AcademicCalendarMessage {
         this.startDate = startDate;
         this.endDate = endDate;
         this.contents = contents;
+    }
+
+    public static AcademicCalendarMessage of(AcademicCalendar academicCalendar) {
+        return AcademicCalendarMessage.builder()
+                .startDate(academicCalendar.getStartDate())
+                .endDate(academicCalendar.getEndDate())
+                .contents(academicCalendar.getContents())
+                .build();
     }
 
     public void checkYearRight() {
