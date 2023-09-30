@@ -8,31 +8,27 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class AcademicCalendarService {
 
     private final AcademicCalendarRepository academicCalendarRepository;
-    private final Map<Integer, Map<Integer, Queue<AcademicCalendarMessage>>> CALENDAR_CACHE = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, Set<AcademicCalendarMessage>>> CALENDAR_CACHE = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
         int nowYear = LocalDate.now().getYear();
 
-        Map<Integer, Queue<AcademicCalendarMessage>> messageQueue = new ConcurrentHashMap<>();
+        Map<Integer, Set<AcademicCalendarMessage>> messageSet = new ConcurrentHashMap<>();
         IntStream.rangeClosed(1, 12)
-                .forEach(i -> messageQueue.put(i, new ConcurrentLinkedQueue<>()));
+                .forEach(i -> messageSet.put(i, Collections.synchronizedSet(new HashSet<>())));
 
-        CALENDAR_CACHE.put(nowYear, messageQueue);
-        CALENDAR_CACHE.put(nowYear + 1, messageQueue);
+        CALENDAR_CACHE.put(nowYear, messageSet);
+        CALENDAR_CACHE.put(nowYear + 1, messageSet);
 
         importFromCalendarRepositoryAndCache();
     }
@@ -52,17 +48,17 @@ public class AcademicCalendarService {
 
         academicCalendarList.forEach((AcademicCalendar ac) -> {
             AcademicCalendarMessage acm = AcademicCalendarMessage.of(ac);
-            getQueueFromCache(acm).offer(acm);
+            getSetFromCache(acm).add(acm);
         });
     }
 
-    private Queue<AcademicCalendarMessage> getQueueFromCache(AcademicCalendarMessage calendarMessage) {
+    private Set<AcademicCalendarMessage> getSetFromCache(AcademicCalendarMessage calendarMessage) {
         return CALENDAR_CACHE.get(calendarMessage.getStartDate().getYear()).get(calendarMessage.getStartDate().getMonthValue());
     }
 
     private void cachingCalendarMessage(AcademicCalendarMessage calendarMessage) {
-        Queue<AcademicCalendarMessage> messageQueue = getQueueFromCache(calendarMessage);
-        messageQueue.offer(calendarMessage);
+        Set<AcademicCalendarMessage> messageSet = getSetFromCache(calendarMessage);
+        messageSet.add(calendarMessage);
     }
 
     private boolean existCalendarMessage(AcademicCalendarMessage calendarMessage) {
