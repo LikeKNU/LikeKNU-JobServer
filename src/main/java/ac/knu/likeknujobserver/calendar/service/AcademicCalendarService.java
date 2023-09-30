@@ -37,8 +37,6 @@ public class AcademicCalendarService {
     }
 
     public void updateCalendar(AcademicCalendarMessage calendarMessage) {
-        calendarMessage.checkYearRight();
-
         if(existCalendarMessage(calendarMessage))
             return;
 

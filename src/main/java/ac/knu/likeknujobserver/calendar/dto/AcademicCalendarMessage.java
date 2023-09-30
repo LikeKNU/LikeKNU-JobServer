@@ -33,19 +33,4 @@ public class AcademicCalendarMessage {
                 .contents(academicCalendar.getContents())
                 .build();
     }
-
-    public void checkYearRight() {
-        if(!isYearRight())
-            modifyDateCalendarMessage();
-    }
-
-    private boolean isYearRight() {
-        int nowYear = LocalDate.now().getYear();
-        return (startDate.getYear() <= nowYear) && (endDate.getYear() >= nowYear);
-    }
-
-    private void modifyDateCalendarMessage() {
-        startDate = startDate.minusYears(1);
-        endDate = endDate.minusYears(1);
-    }
 }
