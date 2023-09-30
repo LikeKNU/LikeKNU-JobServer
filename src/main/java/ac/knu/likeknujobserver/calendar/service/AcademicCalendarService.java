@@ -4,6 +4,8 @@ import ac.knu.likeknujobserver.calendar.domain.AcademicCalendar;
 import ac.knu.likeknujobserver.calendar.dto.AcademicCalendarMessage;
 import ac.knu.likeknujobserver.calendar.repository.AcademicCalendarRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,7 +19,8 @@ import java.util.stream.IntStream;
 public class AcademicCalendarService {
 
     private final AcademicCalendarRepository academicCalendarRepository;
-    private final Map<Integer, Map<Integer, Set<AcademicCalendarMessage>>> CALENDAR_CACHE = new ConcurrentHashMap<>();
+
+    private static final Map<Integer, Map<Integer, Set<AcademicCalendarMessage>>> CALENDAR_CACHE = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
@@ -66,5 +69,17 @@ public class AcademicCalendarService {
                 .get(calendarMessage.getStartDate().getYear())
                 .get(calendarMessage.getStartDate().getMonthValue())
                 .contains(calendarMessage);
+    }
+
+    @Component
+    static class AcademicCalendarCacheScheduler {
+
+        /**
+         * 매년 1월 27일 12시 캐시 초기화
+         */
+        @Scheduled(cron = "0 0 12 27 1 *")
+        public void scheduledCalendarCache() {
+            CALENDAR_CACHE.remove(LocalDate.now().getYear());
+        }
     }
 }
