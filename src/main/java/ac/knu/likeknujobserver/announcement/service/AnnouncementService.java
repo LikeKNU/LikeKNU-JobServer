@@ -76,7 +76,9 @@ public class AnnouncementService {
         Announcement announcement = Announcement.of(announcementMessage, tag);
         announcementRepository.save(announcement);
 
-        notificationService.sendPushNotificationOfAnnouncement(announcement);
+        if (!announcement.getTag().equals(Tag.ETC)) {
+            notificationService.sendPushNotificationOfAnnouncement(announcement);
+        }
     }
 
     private boolean isAlreadyCollectedAnnouncement(AnnouncementMessage announcementMessage) {
@@ -86,7 +88,9 @@ public class AnnouncementService {
     private void cachingAnnouncementMessage(AnnouncementMessage announcementMessage) {
         Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
         announcementMessages.offer(announcementMessage);
-        announcementMessages.poll();
+        if (announcementMessages.size() > 20) {
+            announcementMessages.poll();
+        }
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {

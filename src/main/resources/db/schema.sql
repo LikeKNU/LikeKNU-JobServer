@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS announcement
     announcement_date  DATE          NOT NULL,
     campus             VARCHAR(10)   NOT NULL,
     category           VARCHAR(20)   NOT NULL,
-    tag                VARCHAR(20)   NOT NULL
+    tag                VARCHAR(20)   NOT NULL,
+    CONSTRAINT announcement_unique
+        UNIQUE (announcement_title, announcement_date, campus, category)
 );
 
 CREATE TABLE IF NOT EXISTS route
