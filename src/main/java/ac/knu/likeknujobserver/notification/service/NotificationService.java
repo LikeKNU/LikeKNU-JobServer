@@ -46,8 +46,10 @@ public class NotificationService {
                 .map(Device::getFcmToken)
                 .filter(Objects::nonNull)
                 .toList();
-        sendFcmCloudMessage(tokens, announcement.getTag(), announcement);
-        saveNotification(announcement, subscribedDevices);
+        if (!tokens.isEmpty()) {
+            sendFcmCloudMessage(tokens, announcement.getTag(), announcement);
+            saveNotification(announcement, subscribedDevices);
+        }
     }
 
     private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, Announcement announcement) {

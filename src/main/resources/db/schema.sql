@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS announcement
     announcement_date  DATE          NOT NULL,
     campus             VARCHAR(10)   NOT NULL,
     category           VARCHAR(20)   NOT NULL,
-    tag                VARCHAR(20)   NOT NULL
+    tag                VARCHAR(20)   NOT NULL,
+    CONSTRAINT announcement_unique
+        UNIQUE (announcement_title, announcement_date, campus, category)
 );
 
 CREATE TABLE IF NOT EXISTS route
@@ -103,4 +105,47 @@ CREATE TABLE IF NOT EXISTS device_notification
     PRIMARY KEY (device_id, notification_id),
     FOREIGN KEY (device_id) REFERENCES device (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (notification_id) REFERENCES notification (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS shuttle
+(
+    id           VARCHAR(60) NOT NULL PRIMARY KEY,
+    origin       VARCHAR(20) NOT NULL,
+    destination  VARCHAR(20) NOT NULL,
+    shuttle_type VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS shuttle_bus
+(
+    id           VARCHAR(60) NOT NULL PRIMARY KEY,
+    shuttle_name VARCHAR(20) NOT NULL,
+    shuttle_id   VARCHAR(60) NOT NULL,
+    FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS shuttle_time
+(
+    id           BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    arrival_stop VARCHAR(30) NOT NULL,
+    arrival_time TIME        NOT NULL,
+    sequence     INT         NOT NULL,
+    bus_id       VARCHAR(60) NOT NULL,
+    FOREIGN KEY (bus_id) REFERENCES shuttle_bus (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS academic_calendar
+(
+    id         VARCHAR(60) NOT NULL PRIMARY KEY,
+    contents   VARCHAR(30) NOT NULL,
+    start_date DATETIME    NOT NULL,
+    end_date   DATETIME    NOT NULL,
+    UNIQUE schedule_unique (contents, start_date, end_date)
+);
+
+CREATE TABLE IF NOT EXISTS shuttle_campus
+(
+    shuttle_id VARCHAR(60) NOT NULL,
+    campus     VARCHAR(10) NOT NULL,
+    PRIMARY KEY (shuttle_id, campus),
+    FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
