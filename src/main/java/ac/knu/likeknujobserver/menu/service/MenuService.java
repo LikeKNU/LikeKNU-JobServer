@@ -15,11 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
 
 @Service
@@ -29,13 +26,12 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final CafeteriaRepository cafeteriaRepository;
 
-    private static final Map<CacheCamCafe, Queue<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
+    private static final Map<CacheCamCafe, Set<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
         Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> {
-            if (!MENU_CACHE.containsKey(c))
-                MENU_CACHE.put(c, new ConcurrentLinkedQueue<>());
+            MENU_CACHE.put(c, Collections.synchronizedSet(new HashSet<>()));
             importFromMenuRepositoryAndCache(c);
         });
     }
@@ -50,7 +46,7 @@ public class MenuService {
         Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(c.getCampus(), c.getCafeteriaName())
                 .orElseThrow(NullPointerException::new);
         List<Menu> menusByMenuDateAfter = menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria);
-        Queue<MenuMessage> menuMessages = MENU_CACHE.get(c);
+        Set<MenuMessage> menuMessages = MENU_CACHE.get(c);
 
         menusByMenuDateAfter.forEach((Menu m) -> menuMessages.add(MenuMessage.of(m)));
     }
@@ -70,7 +66,7 @@ public class MenuService {
     }
 
     private void cachingMenuMessage(MenuMessage menuMessage) {
-        Queue<MenuMessage> menuMessages = MENU_CACHE.get(CacheCamCafe.of(menuMessage));
+        Set<MenuMessage> menuMessages = MENU_CACHE.get(CacheCamCafe.of(menuMessage));
         menuMessages.add(menuMessage);
     }
 
