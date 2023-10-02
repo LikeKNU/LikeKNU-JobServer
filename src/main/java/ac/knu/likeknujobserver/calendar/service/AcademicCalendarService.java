@@ -77,7 +77,7 @@ public class AcademicCalendarService {
          */
         @Scheduled(cron = "0 0 12 27 1 *")
         public void scheduledCalendarCache() {
-            CALENDAR_CACHE.remove(LocalDate.now().getYear());
+            CALENDAR_CACHE.remove(LocalDate.now().getYear() - 1);
         }
     }
 }
