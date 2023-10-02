@@ -88,7 +88,7 @@ public class AnnouncementService {
     private void cachingAnnouncementMessage(AnnouncementMessage announcementMessage) {
         Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
         announcementMessages.offer(announcementMessage);
-        if (announcementMessages.size() > 20) {
+        if (announcementMessages.size() > 30) {
             announcementMessages.poll();
         }
     }
