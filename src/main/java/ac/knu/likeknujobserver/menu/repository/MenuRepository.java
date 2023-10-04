@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, String> {
@@ -17,6 +18,6 @@ public interface MenuRepository extends JpaRepository<Menu, String> {
     List<Menu> findMenusByMenuDateAfterAndCafeteria(LocalDate menuDate, Cafeteria cafeteria);
 
     @EntityGraph(attributePaths = {"cafeteria"})
-    Menu findByCafeteriaAndMenuDateAndMealType(Cafeteria cafeteria, LocalDate menuDate, MealType mealType);
+    Optional<Menu> findByCafeteriaAndMenuDateAndMealType(Cafeteria cafeteria, LocalDate menuDate, MealType mealType);
 
 }

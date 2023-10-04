@@ -59,12 +59,12 @@ public class MenuService {
         Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(menuMessage.getCampus(), menuMessage.getCafeteria())
                 .orElseThrow(NullPointerException::new);
 
-        Menu menu = menuRepository.findByCafeteriaAndMenuDateAndMealType(cafeteria, menuMessage.getDate(), menuMessage.getMealType());
+        Optional<Menu> menu = menuRepository.findByCafeteriaAndMenuDateAndMealType(cafeteria, menuMessage.getDate(), menuMessage.getMealType());
 
-        if(menu == null)
+        if(menu.isEmpty())
             menuRepository.save(Menu.of(menuMessage, cafeteria));
         else if(menuMessage.getMenus() != null)
-            menu.setMenus(menuMessage.getMenus());
+            menu.get().setMenus(menuMessage.getMenus());
     }
 
     private void updateMenuRepository(MenuMessage menuMessage, Cafeteria cafeteria) {
