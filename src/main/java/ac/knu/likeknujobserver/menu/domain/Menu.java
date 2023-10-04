@@ -42,6 +42,10 @@ public class Menu extends BaseEntity {
         this.cafeteria = cafeteria;
     }
 
+    public void setMenus(String menus) {
+        this.menus = menus;
+    }
+
     public static Menu of(MenuMessage menuMessage, Cafeteria cafeteria) {
         return Menu.builder()
                 .cafeteria(cafeteria)

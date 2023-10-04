@@ -1,7 +1,6 @@
 package ac.knu.likeknujobserver.menu.dto;
 
 import ac.knu.likeknujobserver.common.value.Campus;
-import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
 import ac.knu.likeknujobserver.menu.domain.value.CafeteriaName;
 import ac.knu.likeknujobserver.menu.domain.value.MealType;
@@ -35,6 +34,10 @@ public class MenuMessage {
         this.mealType = mealType;
         this.campus = campus;
         this.cafeteria = cafeteria;
+    }
+
+    public void setMenus(String menus) {
+        this.menus = menus;
     }
 
     public static MenuMessage of(Menu menu) {
