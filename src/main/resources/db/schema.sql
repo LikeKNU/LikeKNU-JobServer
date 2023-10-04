@@ -137,8 +137,8 @@ CREATE TABLE IF NOT EXISTS academic_calendar
 (
     id         VARCHAR(60) NOT NULL PRIMARY KEY,
     contents   VARCHAR(30) NOT NULL,
-    start_date DATETIME    NOT NULL,
-    end_date   DATETIME    NOT NULL,
+    start_date DATE        NOT NULL,
+    end_date   DATE        NOT NULL,
     UNIQUE schedule_unique (contents, start_date, end_date)
 );
 
