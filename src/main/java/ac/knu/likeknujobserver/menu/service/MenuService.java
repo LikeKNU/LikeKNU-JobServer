@@ -59,16 +59,11 @@ public class MenuService {
         Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(menuMessage.getCampus(), menuMessage.getCafeteria())
                 .orElseThrow(NullPointerException::new);
 
-        Optional<Menu> menu = menuRepository.findByCafeteriaAndMenuDateAndMealType(cafeteria, menuMessage.getDate(), menuMessage.getMealType());
-
-        if(menu.isEmpty())
-            menuRepository.save(Menu.of(menuMessage, cafeteria));
-        else if(menuMessage.getMenus() != null)
-            menu.get().setMenus(menuMessage.getMenus());
-    }
-
-    private void updateMenuRepository(MenuMessage menuMessage, Cafeteria cafeteria) {
-        menuRepository.save(Menu.of(menuMessage, cafeteria));
+        menuRepository.findByCafeteriaAndMenuDateAndMealType(cafeteria, menuMessage.getDate(), menuMessage.getMealType())
+                .ifPresentOrElse(
+                        menu -> menu.setMenus(menuMessage.getMenus()),
+                        () -> menuRepository.save(Menu.of(menuMessage, cafeteria))
+                );
     }
 
     private boolean existMenuMessage(MenuMessage menuMessage) {
