@@ -28,6 +28,9 @@ public class MenuMessage {
     @NotBlank
     private CafeteriaName cafeteria;
 
+    protected MenuMessage() {
+    }
+
     @Builder
     public MenuMessage(String menus, LocalDate date, MealType mealType, Campus campus, CafeteriaName cafeteria) {
         this.menus = menus;
