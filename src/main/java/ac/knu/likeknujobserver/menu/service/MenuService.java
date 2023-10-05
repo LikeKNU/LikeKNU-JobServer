@@ -71,24 +71,8 @@ public class MenuService {
     }
 
     private void cachingMenuMessage(MenuMessage menuMessage) {
-        MenuMessage getMessage = MENU_CACHE.get(CacheCamCafe.of(menuMessage)).stream()
-                .filter(message -> messageFilter(message, menuMessage))
-                .findFirst()
-                .orElse(null);
-
-        if(getMessage != null && menuMessage.getMenus() != null) {
-            getMessage.setMenus(menuMessage.getMenus());
-            return;
-        }
-
         Set<MenuMessage> menuMessages = MENU_CACHE.get(CacheCamCafe.of(menuMessage));
         menuMessages.add(menuMessage);
-    }
-
-    private boolean messageFilter(MenuMessage oldOne, MenuMessage newOne) {
-        return oldOne.getDate().equals(newOne.getDate()) &&
-                oldOne.getCafeteria().equals(newOne.getCafeteria()) &&
-                oldOne.getCampus().equals(newOne.getCampus());
     }
 
     @Component
