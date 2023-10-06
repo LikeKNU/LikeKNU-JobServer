@@ -8,7 +8,7 @@ public enum Category {
     STUDENT_NEWS("학생소식"),
     LIBRARY("도서관"),
     DORMITORY("생활관"),
-    TALENT_DEVELOPMENT("인재개발");
+    INTERNSHIP("현장실습");
 
     private final String categoryName;
 
