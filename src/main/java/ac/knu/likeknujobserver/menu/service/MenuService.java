@@ -48,7 +48,7 @@ public class MenuService {
         List<Menu> menusByMenuDateAfter = menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria);
         Set<MenuMessage> menuMessages = MENU_CACHE.get(c);
 
-        menusByMenuDateAfter.forEach((Menu m) -> menuMessages.add(MenuMessage.of(m)));
+        menusByMenuDateAfter.forEach((Menu m) -> menuMessages.add(MenuMessage.of(m, cafeteria)));
     }
 
     public void updateMenu(MenuMessage menuMessage) {

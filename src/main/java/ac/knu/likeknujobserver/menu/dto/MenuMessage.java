@@ -1,6 +1,7 @@
 package ac.knu.likeknujobserver.menu.dto;
 
 import ac.knu.likeknujobserver.common.value.Campus;
+import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
 import ac.knu.likeknujobserver.menu.domain.value.CafeteriaName;
 import ac.knu.likeknujobserver.menu.domain.value.MealType;
@@ -53,16 +54,12 @@ public class MenuMessage {
         return Objects.hash(menus, date, mealType, campus, cafeteria);
     }
 
-    public void setMenus(String menus) {
-        this.menus = menus;
-    }
-
-    public static MenuMessage of(Menu menu) {
+    public static MenuMessage of(Menu menu, Cafeteria cafeteria) {
         return MenuMessage.builder()
                 .menus(menu.getMenus())
                 .mealType(menu.getMealType())
-                .campus(menu.getCafeteria().getCampus())
-                .cafeteria(menu.getCafeteria().getCafeteriaName())
+                .campus(cafeteria.getCampus())
+                .cafeteria(cafeteria.getCafeteriaName())
                 .date(menu.getMenuDate())
                 .build();
     }
