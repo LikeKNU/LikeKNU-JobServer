@@ -14,10 +14,8 @@ import java.util.Optional;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, String> {
 
-    @EntityGraph(attributePaths = {"cafeteria"})
     List<Menu> findMenusByMenuDateAfterAndCafeteria(LocalDate menuDate, Cafeteria cafeteria);
 
-    @EntityGraph(attributePaths = {"cafeteria"})
     Optional<Menu> findByCafeteriaAndMenuDateAndMealType(Cafeteria cafeteria, LocalDate menuDate, MealType mealType);
 
 }
