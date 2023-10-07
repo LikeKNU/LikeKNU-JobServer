@@ -42,3 +42,5 @@ out/
 /src/test/resources/application.yml
 
 /src/main/resources/static/firebase/likeknu-2023-firebase-adminsdk-ehw5i-31d25209d8.json
+
+.DS_Store
