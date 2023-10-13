@@ -117,9 +117,9 @@ CREATE TABLE IF NOT EXISTS shuttle
 
 CREATE TABLE IF NOT EXISTS shuttle_bus
 (
-    id           VARCHAR(60) NOT NULL PRIMARY KEY,
-    shuttle_name VARCHAR(20) NOT NULL,
-    shuttle_id   VARCHAR(60) NOT NULL,
+    id         VARCHAR(60) NOT NULL PRIMARY KEY,
+    bus_name   VARCHAR(20) NOT NULL,
+    shuttle_id VARCHAR(60) NOT NULL,
     FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
