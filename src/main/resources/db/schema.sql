@@ -123,13 +123,13 @@ CREATE TABLE IF NOT EXISTS shuttle_bus
     FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS shuttle_time
+CREATE TABLE shuttle_time2
 (
-    id           BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    bus_id       VARCHAR(60) NOT NULL,
     arrival_stop VARCHAR(30) NOT NULL,
     arrival_time TIME        NOT NULL,
     sequence     INT         NOT NULL,
-    bus_id       VARCHAR(60) NOT NULL,
+    PRIMARY KEY (bus_id, arrival_stop, arrival_time),
     FOREIGN KEY (bus_id) REFERENCES shuttle_bus (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
