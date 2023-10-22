@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS route
     origin         VARCHAR(20) NOT NULL,
     destination    VARCHAR(20) NOT NULL,
     campus         VARCHAR(10) NOT NULL
-) AUTO_INCREMENT = 10000;
+);
 
 CREATE TABLE IF NOT EXISTS city_bus
 (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS city_bus
     bus_color   VARCHAR(7),
     bus_stop    VARCHAR(30) NOT NULL,
     is_realtime BOOLEAN DEFAULT FALSE
-) AUTO_INCREMENT = 10000;
+);
 
 CREATE TABLE IF NOT EXISTS bus_route
 (
@@ -95,7 +95,8 @@ CREATE TABLE IF NOT EXISTS notification
     id                 VARCHAR(60)  NOT NULL PRIMARY KEY,
     notification_title VARCHAR(80)  NOT NULL,
     notification_body  VARCHAR(150) NOT NULL,
-    notification_date  DATETIME     NOT NULL
+    notification_date  DATETIME     NOT NULL,
+    `read`             BOOLEAN      NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS device_notification
@@ -123,7 +124,7 @@ CREATE TABLE IF NOT EXISTS shuttle_bus
     FOREIGN KEY (shuttle_id) REFERENCES shuttle (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE shuttle_time2
+CREATE TABLE IF NOT EXISTS shuttle_time
 (
     bus_id       VARCHAR(60) NOT NULL,
     arrival_stop VARCHAR(30) NOT NULL,
