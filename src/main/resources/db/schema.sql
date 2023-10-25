@@ -92,11 +92,12 @@ CREATE TABLE IF NOT EXISTS subscribe
 
 CREATE TABLE IF NOT EXISTS notification
 (
-    id                 VARCHAR(60)  NOT NULL PRIMARY KEY,
-    notification_title VARCHAR(80)  NOT NULL,
-    notification_body  VARCHAR(150) NOT NULL,
-    notification_date  DATETIME     NOT NULL,
-    `read`             BOOLEAN      NOT NULL DEFAULT FALSE
+    id                 VARCHAR(60)   NOT NULL PRIMARY KEY,
+    notification_title VARCHAR(80)   NOT NULL,
+    notification_body  VARCHAR(150)  NOT NULL,
+    notification_date  DATETIME      NOT NULL,
+    notification_url   VARCHAR(1000) NOT NULL,
+    `read`             BOOLEAN       NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS device_notification
