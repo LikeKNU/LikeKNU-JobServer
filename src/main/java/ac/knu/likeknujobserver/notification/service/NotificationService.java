@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,17 +31,12 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Async
     public void sendPushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();
         Tag tag = announcement.getTag();
-        List<Device> subscribedDevices;
-        if (campus.equals(Campus.ALL)) {
-            subscribedDevices = deviceRepository.findBySubscribeTagsContaining(tag);
-        } else {
-            subscribedDevices = deviceRepository.findByCampusAndSubscribeTagsContaining(campus, tag);
-        }
+        List<Device> subscribedDevices = getDevices(campus, tag);
 
         List<String> tokens = subscribedDevices.stream()
                 .map(Device::getFcmToken)
@@ -50,6 +46,13 @@ public class NotificationService {
             sendFcmCloudMessage(tokens, announcement.getTag(), announcement);
             saveNotification(announcement, subscribedDevices);
         }
+    }
+
+    private List<Device> getDevices(Campus campus, Tag tag) {
+        if (campus.equals(Campus.ALL)) {
+            return deviceRepository.findBySubscribeTagsContaining(tag);
+        }
+        return deviceRepository.findByCampusAndSubscribeTagsContaining(campus, tag);
     }
 
     private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, Announcement announcement) {
@@ -65,7 +68,7 @@ public class NotificationService {
         try {
             BatchResponse batchResponse = FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage);
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException(e);
+            //TODO FCM error handling
         }
     }
 
