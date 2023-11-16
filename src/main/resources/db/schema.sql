@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS city_bus
 (
     id          VARCHAR(60) NOT NULL PRIMARY KEY,
     bus_number  VARCHAR(10) NOT NULL,
-    bus_name    VARCHAR(30),
+    bus_name    VARCHAR(60),
     bus_color   VARCHAR(7),
     bus_stop    VARCHAR(30) NOT NULL,
     is_realtime BOOLEAN DEFAULT FALSE

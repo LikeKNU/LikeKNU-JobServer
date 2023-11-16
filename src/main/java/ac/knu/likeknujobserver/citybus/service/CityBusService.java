@@ -25,18 +25,20 @@ public class CityBusService {
     public void updateRealtimeBusArrivalTime(List<BusArrivalTimeMessage> busArrivalTimes) {
         Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
 
-        cityBusRepository.findByIsRealtimeIsTrue().forEach(cityBus -> {
-            String busStop = cityBus.getBusStop();
-            String busName = cityBus.getBusName();
-            Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
+        cityBusRepository.findByIsRealtimeIsTrue()
+                .forEach(cityBus -> {
+                    String busStop = cityBus.getBusStop();
+                    String busName = cityBus.getBusName();
+                    Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
 
-            if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
-                List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName).stream()
-                        .map(BusArrivalTimeMessage::getArrivalTime)
-                        .toList();
-                cityBus.updateArrivalTimes(arrivalTimes);
-            }
-        });
+                    if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
+                        List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName)
+                                .stream()
+                                .map(BusArrivalTimeMessage::getArrivalTime)
+                                .toList();
+                        cityBus.updateArrivalTimes(arrivalTimes);
+                    }
+                });
     }
 
     private Map<String, Map<String, List<BusArrivalTimeMessage>>> groupingByDepartureStopAndBusName(List<BusArrivalTimeMessage> busArrivalTimes) {
