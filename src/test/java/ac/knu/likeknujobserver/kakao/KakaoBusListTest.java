@@ -31,7 +31,7 @@ public class KakaoBusListTest {
     @Transactional
     @Rollback(value = false)
     void test() {
-        Route route = routeRepository.findById("route_1ba8b190ecd54bcf9e96f0846d4f408f")
+        Route route = routeRepository.findById("route_67dde868ae45423984d824bf66fa1e7e")
                 .orElseThrow();
 
         try (Reader reader = new FileReader("src/main/resources/static/kakao-bus-list.json")) {
