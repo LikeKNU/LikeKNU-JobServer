@@ -28,6 +28,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class AnnouncementService {
 
     private static final Map<Category, Queue<AnnouncementMessage>> ANNOUNCEMENT_CACHE = new ConcurrentHashMap<>();
+    private static final int CACHE_SIZE = 30;
 
     private final AnnouncementRepository announcementRepository;
     private final NotificationService notificationService;
@@ -88,7 +89,7 @@ public class AnnouncementService {
     private void cachingAnnouncementMessage(AnnouncementMessage announcementMessage) {
         Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
         announcementMessages.offer(announcementMessage);
-        if (announcementMessages.size() > 30) {
+        if (announcementMessages.size() > CACHE_SIZE) {
             announcementMessages.poll();
         }
     }
