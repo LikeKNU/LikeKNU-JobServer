@@ -10,7 +10,8 @@ public enum DepartureStop {
     CHEONAN_STATION("368238", "천안역"),
     SINGWAN_TERMINAL("362043", "종합버스터미널(신관초방면)"),
 
-    SINGWAN_TERMINAL_KAKAO("BS436082", "종합버스터미널(신관초방면)");
+    SINGWAN_TERMINAL_KAKAO("BS436082", "종합버스터미널(신관초방면)"),
+    SINGWAN_TERMINAL_OCRYONG_KAKAO("BS436106", "종합버스터미널(옥룡동방면)");
 
     private final String stopId;
     private final String stopName;

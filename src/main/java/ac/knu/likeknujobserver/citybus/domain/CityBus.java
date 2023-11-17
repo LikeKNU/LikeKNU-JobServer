@@ -50,7 +50,7 @@ public class CityBus extends BaseEntity {
             joinColumns = @JoinColumn(name = "bus_id"),
             inverseJoinColumns = @JoinColumn(name = "route_id"))
     @ManyToMany
-    private List<Route> routes;
+    private List<Route> routes = new ArrayList<>();
 
     @CollectionTable(name = "bus_time", joinColumns = @JoinColumn(name = "bus_id"))
     @Column(name = "arrival_time")

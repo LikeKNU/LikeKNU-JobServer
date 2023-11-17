@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -46,7 +47,7 @@ public class Route extends BaseEntity {
             joinColumns = @JoinColumn(name = "route_id"),
             inverseJoinColumns = @JoinColumn(name = "bus_id"))
     @ManyToMany
-    private List<CityBus> buses;
+    private List<CityBus> buses = new ArrayList<>();
 
     protected Route() {
         super(Domain.ROUTE);
@@ -61,5 +62,9 @@ public class Route extends BaseEntity {
         this.origin = origin;
         this.destination = destination;
         this.campus = campus;
+    }
+
+    public void addCityBus(CityBus cityBus) {
+        buses.add(cityBus);
     }
 }
