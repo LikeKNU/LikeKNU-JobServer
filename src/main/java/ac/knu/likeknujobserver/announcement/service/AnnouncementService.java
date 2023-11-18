@@ -42,8 +42,15 @@ public class AnnouncementService {
 
     @PostConstruct
     void init() {
-        Map<Category, List<Announcement>> recentAnnouncementsByCategory = groupingRecentAnnouncementsByCategory();
-        initializeAnnouncementCache(recentAnnouncementsByCategory);
+        Map<Category, List<Announcement>> announcementsGroupingByCategory = groupingRecentAnnouncementsByCategory();
+        Arrays.stream(Category.values())
+                .forEach(category -> ANNOUNCEMENT_CACHE.put(category, new LinkedBlockingQueue<>()));
+
+        announcementsGroupingByCategory.keySet().stream()
+                .flatMap(category -> announcementsGroupingByCategory.get(category)
+                        .stream()
+                        .map(AnnouncementMessage::of))
+                .forEach(this::caching);
     }
 
     private Map<Category, List<Announcement>> groupingRecentAnnouncementsByCategory() {
@@ -53,26 +60,14 @@ public class AnnouncementService {
                 .collect(groupingBy(Announcement::getCategory));
     }
 
-    private void initializeAnnouncementCache(Map<Category, List<Announcement>> announcementsByCategory) {
-        Arrays.stream(Category.values())
-                .forEach(category -> ANNOUNCEMENT_CACHE.put(category, new LinkedBlockingQueue<>()));
-
-        announcementsByCategory.keySet().stream()
-                .flatMap(category -> announcementsByCategory.get(category).stream()
-                        .map(AnnouncementMessage::of))
-                .forEach(announcementMessage -> {
-                    Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
-                    announcementMessages.offer(announcementMessage);
-                });
-    }
-
     @Transactional
     public void updateAnnouncement(AnnouncementMessage announcementMessage) {
-        if (isAlreadyCollectedAnnouncement(announcementMessage)) {
+        if (isAlreadyCollected(announcementMessage)) {
             return;
         }
 
-        cachingAnnouncementMessage(announcementMessage);
+        caching(announcementMessage);
+
         Tag tag = abstractTagOfAnnouncement(announcementMessage);
         Announcement announcement = Announcement.of(announcementMessage, tag);
         announcementRepository.save(announcement);
@@ -82,11 +77,12 @@ public class AnnouncementService {
         }
     }
 
-    private boolean isAlreadyCollectedAnnouncement(AnnouncementMessage announcementMessage) {
-        return ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory()).contains(announcementMessage);
+    private boolean isAlreadyCollected(AnnouncementMessage announcementMessage) {
+        return ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory())
+                .contains(announcementMessage);
     }
 
-    private void cachingAnnouncementMessage(AnnouncementMessage announcementMessage) {
+    private void caching(AnnouncementMessage announcementMessage) {
         Queue<AnnouncementMessage> announcementMessages = ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory());
         announcementMessages.offer(announcementMessage);
         if (announcementMessages.size() > CACHE_SIZE) {
@@ -99,4 +95,5 @@ public class AnnouncementService {
                 ? openAI.abstractTagOfAnnouncement(announcementMessage.getTitle())
                 : Tag.valueOf(announcementMessage.getCategory().name());
     }
+
 }
