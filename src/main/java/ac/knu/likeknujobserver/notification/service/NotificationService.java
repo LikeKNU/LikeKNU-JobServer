@@ -13,7 +13,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     @Async
     public void sendPushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();

@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.announcement.service;
 
-import ac.knu.likeknujobserver.announcement.api.OpenAI;
+import ac.knu.likeknujobserver.announcement.api.OpenAIFineTuning;
 import ac.knu.likeknujobserver.announcement.domain.Announcement;
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
 import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
@@ -32,12 +32,12 @@ public class AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
     private final NotificationService notificationService;
-    private final OpenAI openAI;
+    private final OpenAIFineTuning openAIFineTuning;
 
-    public AnnouncementService(AnnouncementRepository announcementRepository, NotificationService notificationService, OpenAI openAI) {
+    public AnnouncementService(AnnouncementRepository announcementRepository, NotificationService notificationService, OpenAIFineTuning openAIFineTuning) {
         this.announcementRepository = announcementRepository;
         this.notificationService = notificationService;
-        this.openAI = openAI;
+        this.openAIFineTuning = openAIFineTuning;
     }
 
     @PostConstruct
@@ -95,8 +95,10 @@ public class AnnouncementService {
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {
-        return announcementMessage.getCategory().equals(Category.STUDENT_NEWS)
-                ? openAI.abstractTagOfAnnouncement(announcementMessage.getTitle())
-                : Tag.valueOf(announcementMessage.getCategory().name());
+        if (announcementMessage.getCategory().equals(Category.STUDENT_NEWS)) {
+            return openAIFineTuning.abstractTagOfAnnouncement(announcementMessage.getTitle());
+        }
+
+        return Tag.valueOf(announcementMessage.getCategory().name());
     }
 }
