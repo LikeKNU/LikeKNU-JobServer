@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class OpenAI {
+public class OpenAIFineTuning {
 
     private final OpenAIProperties openAIProperties;
     private final RestTemplate restTemplate;
 
-    public OpenAI(OpenAIProperties openAIProperties, RestTemplate restTemplate) {
+    public OpenAIFineTuning(OpenAIProperties openAIProperties, RestTemplate restTemplate) {
         this.openAIProperties = openAIProperties;
         this.restTemplate = restTemplate;
     }
@@ -32,8 +32,9 @@ public class OpenAI {
 
         FineTuningModelResponse fineTuningModelResponse =
                 restTemplate.postForObject(url, httpEntity, FineTuningModelResponse.class);
-        String content = fineTuningModelResponse.getContent();
 
+        assert fineTuningModelResponse != null;
+        String content = fineTuningModelResponse.getContent();
         return Tag.of(content);
     }
 }
