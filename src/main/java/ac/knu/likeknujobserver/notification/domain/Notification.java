@@ -28,7 +28,7 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private String notificationUrl;
 
-    @Column(name = "read")
+    @Column(name = "`read`")
     private boolean isRead;
 
     protected Notification() {

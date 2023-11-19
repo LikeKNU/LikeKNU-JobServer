@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class NotificationService {
 
@@ -31,6 +31,7 @@ public class NotificationService {
     }
 
     @Async
+    @Transactional
     public void sendPushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();
         Tag tag = announcement.getTag();
