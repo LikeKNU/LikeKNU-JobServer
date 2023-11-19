@@ -8,14 +8,19 @@ import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.common.value.Domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Table(name = "announcement")
 @Entity
@@ -41,6 +46,10 @@ public class Announcement extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "tag", nullable = false)
     private Tag tag;
+
+    @CreatedDate
+    @Column(name = "collected_at")
+    private LocalDateTime collectedAt;
 
     protected Announcement() {
         super(Domain.ANNOUNCEMENT);

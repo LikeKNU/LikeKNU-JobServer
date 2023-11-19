@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS announcement
     campus             VARCHAR(10)   NOT NULL,
     category           VARCHAR(20)   NOT NULL,
     tag                VARCHAR(20)   NOT NULL,
+    collected_at       DATETIME      NOT NULL,
     CONSTRAINT announcement_unique
         UNIQUE (announcement_title, announcement_date, campus, category)
 );
