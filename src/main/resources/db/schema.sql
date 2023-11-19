@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS menu
 CREATE TABLE IF NOT EXISTS device
 (
     id            VARCHAR(36) NOT NULL PRIMARY KEY,
-    fcm_token     VARCHAR(60) UNIQUE,
+    fcm_token     VARCHAR(200) UNIQUE,
     campus        VARCHAR(10) NOT NULL,
     notification  BOOLEAN     NOT NULL DEFAULT FALSE,
     registered_at DATETIME    NOT NULL
