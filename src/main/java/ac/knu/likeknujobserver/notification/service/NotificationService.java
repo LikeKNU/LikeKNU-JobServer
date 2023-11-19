@@ -38,6 +38,7 @@ public class NotificationService {
         List<Device> subscribedDevices = getDevices(campus, tag);
 
         List<String> tokens = subscribedDevices.stream()
+                .filter(Device::isTurnOnNotification)
                 .map(Device::getFcmToken)
                 .filter(Objects::nonNull)
                 .toList();

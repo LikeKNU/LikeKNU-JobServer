@@ -25,16 +25,23 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime notificationDate;
 
+    @Column(nullable = false)
+    private String notificationUrl;
+
+    @Column(name = "read")
+    private boolean isRead;
+
     protected Notification() {
         super(Domain.NOTIFICATION);
     }
 
     @Builder
-    public Notification(Domain domain, String notificationTitle, String notificationBody, LocalDateTime notificationDate) {
+    public Notification(Domain domain, String notificationTitle, String notificationBody, LocalDateTime notificationDate, String notificationUrl) {
         this();
         this.notificationTitle = notificationTitle;
         this.notificationBody = notificationBody;
         this.notificationDate = notificationDate;
+        this.notificationUrl = notificationUrl;
     }
 
     public static Notification of(Announcement announcement) {
@@ -42,6 +49,7 @@ public class Notification extends BaseEntity {
                 .notificationTitle(String.format("[%s] 새로운 공지사항", announcement.getTag().getTagName()))
                 .notificationBody(announcement.getAnnouncementTitle())
                 .notificationDate(LocalDateTime.now())
+                .notificationUrl(announcement.getAnnouncementUrl())
                 .build();
     }
 }

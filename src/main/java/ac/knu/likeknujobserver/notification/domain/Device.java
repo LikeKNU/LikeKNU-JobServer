@@ -48,6 +48,9 @@ public class Device {
     @Enumerated(EnumType.STRING)
     private Campus campus;
 
+    @Column(name = "notification", nullable = false)
+    private boolean isTurnOnNotification;
+
     @Column(nullable = false)
     private LocalDateTime registeredAt;
 
