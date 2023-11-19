@@ -34,10 +34,11 @@ public class NotificationService {
     public void sendPushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();
         Tag tag = announcement.getTag();
-        List<Device> subscribedDevices = getDevices(campus, tag);
+        List<Device> subscribedDevices = getDevices(campus, tag).stream()
+                .filter(Device::isTurnOnNotification)
+                .toList();
 
         List<String> tokens = subscribedDevices.stream()
-                .filter(Device::isTurnOnNotification)
                 .map(Device::getFcmToken)
                 .filter(Objects::nonNull)
                 .toList();
