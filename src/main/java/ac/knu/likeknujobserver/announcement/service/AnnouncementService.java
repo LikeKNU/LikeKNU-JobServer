@@ -55,7 +55,7 @@ public class AnnouncementService {
 
     private Map<Category, List<Announcement>> groupingRecentAnnouncementsByCategory() {
         return Arrays.stream(Category.values())
-                .map(announcementRepository::findTop30ByCategoryOrderByAnnouncementDateDesc)
+                .map(announcementRepository::findTop30ByCategoryOrderByCollectedAtDesc)
                 .flatMap(Collection::stream)
                 .collect(groupingBy(Announcement::getCategory));
     }

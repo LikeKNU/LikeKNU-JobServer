@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
-    List<Announcement> findTop30ByCategoryOrderByAnnouncementDateDesc(Category category);
+    List<Announcement> findTop30ByCategoryOrderByCollectedAtDesc(Category category);
 }
