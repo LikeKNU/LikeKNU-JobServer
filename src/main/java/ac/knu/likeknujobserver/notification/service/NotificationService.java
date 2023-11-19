@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class NotificationService {
 
@@ -30,7 +30,6 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    @Transactional
     @Async
     public void sendPushNotificationOfAnnouncement(Announcement announcement) {
         Campus campus = announcement.getCampus();
