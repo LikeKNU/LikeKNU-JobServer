@@ -3,81 +3,74 @@ package ac.knu.likeknujobserver.calendar.service;
 import ac.knu.likeknujobserver.calendar.domain.AcademicCalendar;
 import ac.knu.likeknujobserver.calendar.dto.AcademicCalendarMessage;
 import ac.knu.likeknujobserver.calendar.repository.AcademicCalendarRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.Year;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 public class AcademicCalendarService {
 
-    private final AcademicCalendarRepository academicCalendarRepository;
+    private static final Map<Year, Set<AcademicCalendarMessage>> CALENDAR_CACHE = new ConcurrentHashMap<>();
 
-    private static final Map<Integer, Map<Integer, Set<AcademicCalendarMessage>>> CALENDAR_CACHE = new ConcurrentHashMap<>();
+    private final AcademicCalendarRepository academicCalendarRepository;
 
     @PostConstruct
     void init() {
-        int nowYear = LocalDate.now().getYear();
-
-        Map<Integer, Set<AcademicCalendarMessage>> messageSet = new ConcurrentHashMap<>();
-        IntStream.rangeClosed(1, 12)
-                .forEach(i -> messageSet.put(i, Collections.synchronizedSet(new HashSet<>())));
-
-        CALENDAR_CACHE.put(nowYear, messageSet);
-        CALENDAR_CACHE.put(nowYear + 1, messageSet);
+        Year nowYear = Year.now();
+        CALENDAR_CACHE.put(nowYear, Collections.synchronizedSet(new HashSet<>()));
+        CALENDAR_CACHE.put(nowYear.plusYears(1), Collections.synchronizedSet(new HashSet<>()));
 
         importFromCalendarRepositoryAndCache();
     }
 
-    public void updateCalendar(AcademicCalendarMessage calendarMessage) {
-        if(existCalendarMessage(calendarMessage))
+    private void importFromCalendarRepositoryAndCache() {
+        academicCalendarRepository.findByStartDateGreaterThanEqual(LocalDate.now())
+                .stream()
+                .map(AcademicCalendarMessage::of)
+                .forEach(this::caching);
+    }
+
+    private static Set<AcademicCalendarMessage> getAcademicClendarCacheSet(AcademicCalendarMessage academicCalendarMessage) {
+        LocalDate startDate = academicCalendarMessage.getStartDate();
+        Year year = Year.of(startDate.getYear());
+        return CALENDAR_CACHE.get(year);
+    }
+
+    public void updateCalendar(AcademicCalendarMessage academicCalendarMessage) {
+        if (isAlreadyCollected(academicCalendarMessage))
             return;
 
-        cachingCalendarMessage(calendarMessage);
-        academicCalendarRepository.save(AcademicCalendar.of(calendarMessage));
+        caching(academicCalendarMessage);
+        academicCalendarRepository.save(AcademicCalendar.of(academicCalendarMessage));
     }
 
-    private void importFromCalendarRepositoryAndCache() {
-        List<AcademicCalendar> academicCalendarList = academicCalendarRepository.findByStartDateGreaterThanEqual(LocalDate.now());
-
-        academicCalendarList.forEach((AcademicCalendar ac) -> {
-            AcademicCalendarMessage acm = AcademicCalendarMessage.of(ac);
-            getSetFromCache(acm).add(acm);
-        });
+    private boolean isAlreadyCollected(AcademicCalendarMessage academicCalendarMessage) {
+        Set<AcademicCalendarMessage> academicCalendarMessages = getAcademicClendarCacheSet(academicCalendarMessage);
+        return academicCalendarMessages.contains(academicCalendarMessage);
     }
 
-    private Set<AcademicCalendarMessage> getSetFromCache(AcademicCalendarMessage calendarMessage) {
-        return CALENDAR_CACHE.get(calendarMessage.getStartDate().getYear()).get(calendarMessage.getStartDate().getMonthValue());
+    private void caching(AcademicCalendarMessage academicCalendarMessage) {
+        Set<AcademicCalendarMessage> academicCalendarMessages = getAcademicClendarCacheSet(academicCalendarMessage);
+        academicCalendarMessages.add(academicCalendarMessage);
     }
 
-    private void cachingCalendarMessage(AcademicCalendarMessage calendarMessage) {
-        Set<AcademicCalendarMessage> messageSet = getSetFromCache(calendarMessage);
-        messageSet.add(calendarMessage);
-    }
-
-    private boolean existCalendarMessage(AcademicCalendarMessage calendarMessage) {
-        return CALENDAR_CACHE
-                .get(calendarMessage.getStartDate().getYear())
-                .get(calendarMessage.getStartDate().getMonthValue())
-                .contains(calendarMessage);
-    }
-
-    @Component
-    static class AcademicCalendarCacheScheduler {
-
-        /**
-         * 매년 1월 27일 12시 캐시 초기화
-         */
-        @Scheduled(cron = "0 0 12 27 1 *")
-        public void scheduledCalendarCache() {
-            CALENDAR_CACHE.remove(LocalDate.now().getYear() - 1);
-        }
+    /**
+     * 매년 1월 1일 00시 캐시 초기화
+     */
+    @Scheduled(cron = "0 0 0 1 1 *")
+    public void scheduledCalendarCache() {
+        Year nowYear = Year.now();
+        CALENDAR_CACHE.remove(nowYear.minusYears(1));
+        CALENDAR_CACHE.put(nowYear.plusYears(1), Collections.synchronizedSet(new HashSet<>()));
     }
 }

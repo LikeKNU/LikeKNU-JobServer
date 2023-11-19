@@ -2,7 +2,7 @@ package ac.knu.likeknujobserver.menu.service;
 
 import ac.knu.likeknujobserver.menu.domain.Cafeteria;
 import ac.knu.likeknujobserver.menu.domain.Menu;
-import ac.knu.likeknujobserver.menu.domain.value.CacheCamCafe;
+import ac.knu.likeknujobserver.menu.domain.value.CafeteriaInformation;
 import ac.knu.likeknujobserver.menu.dto.MenuMessage;
 import ac.knu.likeknujobserver.menu.repository.CafeteriaRepository;
 import ac.knu.likeknujobserver.menu.repository.MenuRepository;
@@ -15,47 +15,55 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class MenuService {
 
+    private static final Map<CafeteriaInformation, Set<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
+
     private final MenuRepository menuRepository;
     private final CafeteriaRepository cafeteriaRepository;
 
-    private static final Map<CacheCamCafe, Set<MenuMessage>> MENU_CACHE = new ConcurrentHashMap<>();
-
     @PostConstruct
     void init() {
-        Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> {
-            MENU_CACHE.put(c, Collections.synchronizedSet(new HashSet<>()));
-            importFromMenuRepositoryAndCache(c);
-        });
+        Arrays.stream(CafeteriaInformation.values())
+                .forEach(cafeteriaInformation -> {
+                    MENU_CACHE.put(cafeteriaInformation, Collections.synchronizedSet(new HashSet<>()));
+                    importFromMenuRepositoryAndCache(cafeteriaInformation);
+                });
     }
 
     /**
      * db에서 이번주 일요일부터 menu를 가져와 캐시에 저장
      *
-     * @param c
+     * @param cafeteriaInformation
      */
-    private void importFromMenuRepositoryAndCache(CacheCamCafe c) {
-        LocalDate thisSunday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(c.getCampus(), c.getCafeteriaName())
+    private void importFromMenuRepositoryAndCache(CafeteriaInformation cafeteriaInformation) {
+        LocalDate thisSunday = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(
+                        cafeteriaInformation.getCampus(), cafeteriaInformation.getCafeteriaName()
+                )
                 .orElseThrow(NullPointerException::new);
-        List<Menu> menusByMenuDateAfter = menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria);
-        Set<MenuMessage> menuMessages = MENU_CACHE.get(c);
 
-        menusByMenuDateAfter.forEach((Menu m) -> menuMessages.add(MenuMessage.of(m, cafeteria)));
+        menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria)
+                .forEach(menu -> {
+                    caching(MenuMessage.of(menu, cafeteria));
+                });
     }
 
     public void updateMenu(MenuMessage menuMessage) {
-        if (existMenuMessage(menuMessage))
+        if (isAlreadyCollected(menuMessage))
             return;
 
-        cachingMenuMessage(menuMessage);
+        caching(menuMessage);
         Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(menuMessage.getCampus(), menuMessage.getCafeteria())
                 .orElseThrow(NullPointerException::new);
 
@@ -66,12 +74,13 @@ public class MenuService {
                 );
     }
 
-    private boolean existMenuMessage(MenuMessage menuMessage) {
-        return MENU_CACHE.get(CacheCamCafe.of(menuMessage)).contains(menuMessage);
+    private boolean isAlreadyCollected(MenuMessage menuMessage) {
+        return MENU_CACHE.get(CafeteriaInformation.of(menuMessage))
+                .contains(menuMessage);
     }
 
-    private void cachingMenuMessage(MenuMessage menuMessage) {
-        Set<MenuMessage> menuMessages = MENU_CACHE.get(CacheCamCafe.of(menuMessage));
+    private void caching(MenuMessage menuMessage) {
+        Set<MenuMessage> menuMessages = MENU_CACHE.get(CafeteriaInformation.of(menuMessage));
         menuMessages.add(menuMessage);
     }
 
@@ -80,13 +89,14 @@ public class MenuService {
 
         /**
          * 매주 금요일 18시 캐시 초기화
-         *      크롤러 작동 요일: 일 ~ 목
-         *      크롤러 작동 시간: 9 ~ 19
+         * 크롤러 작동 요일: 일 ~ 목
+         * 크롤러 작동 시간: 9 ~ 19
          */
         @Scheduled(cron = "0 0 18 * * FRI")
         public void scheduledMenuCache() {
-            Stream.of(CacheCamCafe.values()).forEach((CacheCamCafe c) -> MENU_CACHE.get(c).clear());
+            Arrays.stream(CafeteriaInformation.values())
+                    .forEach(cafeteriaInformation -> MENU_CACHE.get(cafeteriaInformation)
+                            .clear());
         }
     }
-
 }
