@@ -37,6 +37,7 @@ out/
 .vscode/
 
 /src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
 
 /src/main/resources/static/firebase/likeknu-2023-firebase-adminsdk-ehw5i-31d25209d8.json
 
