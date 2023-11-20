@@ -13,7 +13,7 @@ echo "[$NOW] $JAR 복사" >> $START_LOG
 cp $ROOT_PATH/build/libs/LikeKNU-JobServer-1.0.0.jar $JAR
 
 echo "[$NOW] > $JAR 실행" >> $START_LOG
-source ~/.bashrc
+source ~/.bash_profile
 nohup java -jar $JAR > $APP_LOG 2> $ERROR_LOG &
 
 SERVICE_PID=$(pgrep -f $JAR)
