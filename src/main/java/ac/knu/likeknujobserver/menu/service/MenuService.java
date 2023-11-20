@@ -48,15 +48,12 @@ public class MenuService {
     private void importFromMenuRepositoryAndCache(CafeteriaInformation cafeteriaInformation) {
         LocalDate thisSunday = LocalDate.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-        Cafeteria cafeteria = cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(
-                        cafeteriaInformation.getCampus(), cafeteriaInformation.getCafeteriaName()
-                )
-                .orElseThrow(NullPointerException::new);
-
-        menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria)
+        cafeteriaRepository.findCafeteriaByCampusAndCafeteriaName(
+                cafeteriaInformation.getCampus(), cafeteriaInformation.getCafeteriaName()
+        ).ifPresent(cafeteria -> menuRepository.findMenusByMenuDateAfterAndCafeteria(thisSunday, cafeteria)
                 .forEach(menu -> {
                     caching(MenuMessage.of(menu, cafeteria));
-                });
+                }));
     }
 
     public void updateMenu(MenuMessage menuMessage) {

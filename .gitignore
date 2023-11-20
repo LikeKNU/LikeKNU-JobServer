@@ -36,13 +36,10 @@ out/
 ### VS Code ###
 .vscode/
 
-/src/main/resources/application.properties
 /src/main/resources/application-dev.properties
-/src/main/resources/application-prod.properties
-/src/main/resources/application.yml
-/src/test/resources/application.properties
-/src/test/resources/application.yml
 
 /src/main/resources/static/firebase/likeknu-2023-firebase-adminsdk-ehw5i-31d25209d8.json
 
 .DS_Store
+
+src/main/resources/db/schema.sql
