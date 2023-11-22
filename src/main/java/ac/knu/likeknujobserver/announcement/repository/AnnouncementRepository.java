@@ -9,4 +9,6 @@ import java.util.List;
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
     List<Announcement> findTop30ByCategoryOrderByCollectedAtDesc(Category category);
+
+    List<Announcement> findByAnnouncementTitle(String title);
 }

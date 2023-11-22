@@ -62,11 +62,16 @@ public class AnnouncementService {
 
     @Transactional
     public void updateAnnouncement(AnnouncementMessage announcementMessage) {
-        if (isAlreadyCollected(announcementMessage)) {
+        if (isAlreadyCached(announcementMessage)) {
             return;
         }
 
         caching(announcementMessage);
+
+        if (isAlreadyCollected(announcementMessage)) {
+            updateCollectedDate(announcementMessage);
+            return;
+        }
 
         Tag tag = abstractTagOfAnnouncement(announcementMessage);
         Announcement announcement = Announcement.of(announcementMessage, tag);
@@ -77,7 +82,7 @@ public class AnnouncementService {
         }
     }
 
-    private boolean isAlreadyCollected(AnnouncementMessage announcementMessage) {
+    private boolean isAlreadyCached(AnnouncementMessage announcementMessage) {
         return ANNOUNCEMENT_CACHE.get(announcementMessage.getCategory())
                 .contains(announcementMessage);
     }
@@ -88,6 +93,24 @@ public class AnnouncementService {
         if (announcementMessages.size() > CACHE_SIZE) {
             announcementMessages.poll();
         }
+    }
+
+    private boolean isAlreadyCollected(AnnouncementMessage announcementMessage) {
+        String title = announcementMessage.getTitle();
+        String url = announcementMessage.getAnnouncementUrl();
+        return announcementRepository.findByAnnouncementTitle(title)
+                .stream()
+                .anyMatch(announcement -> announcement.isSameUrl(url));
+    }
+
+    private void updateCollectedDate(AnnouncementMessage announcementMessage) {
+        String title = announcementMessage.getTitle();
+        String url = announcementMessage.getAnnouncementUrl();
+        announcementRepository.findByAnnouncementTitle(title)
+                .stream()
+                .filter(announcement -> announcement.isSameUrl(url))
+                .findAny()
+                .ifPresent(Announcement::updateCollectedAtNow);
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {

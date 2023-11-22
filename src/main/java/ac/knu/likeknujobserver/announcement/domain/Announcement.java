@@ -76,4 +76,12 @@ public class Announcement extends BaseEntity {
                 .tag(tag)
                 .build();
     }
+
+    public boolean isSameUrl(String url) {
+        return this.announcementUrl.equals(url);
+    }
+
+    public void updateCollectedAtNow() {
+        this.collectedAt = LocalDateTime.now();
+    }
 }
