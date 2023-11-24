@@ -67,7 +67,6 @@ public class AnnouncementService {
         }
 
         caching(announcementMessage);
-
         if (isAlreadyCollected(announcementMessage)) {
             updateCollectedDate(announcementMessage);
             return;
