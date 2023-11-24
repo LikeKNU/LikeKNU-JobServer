@@ -9,13 +9,15 @@ import java.util.stream.Stream;
 @Getter
 public enum CafeteriaInformation {
 
-    SINGWAN_STUDENT(Campus.SINGWAN, CafeteriaName.STUDENT_CAFETERIA),
-    SINGWAN_EMPLOYEE(Campus.SINGWAN, CafeteriaName.EMPLOYEE_CAFETERIA),
+    SINGWAN_SODAM(Campus.SINGWAN, CafeteriaName.SODAM),
+    SINGWAN_NEULSOM(Campus.SINGWAN, CafeteriaName.NEULSOM),
     SINGWAN_EUN_VIS(Campus.SINGWAN, CafeteriaName.EUNHAENGSA_VISION),
     SINGWAN_DREAM(Campus.SINGWAN, CafeteriaName.DREAM),
+
     CHEONAN_STUDENT(Campus.CHEONAN, CafeteriaName.STUDENT_CAFETERIA),
     CHEONAN_EMPLOYEE(Campus.CHEONAN, CafeteriaName.EMPLOYEE_CAFETERIA),
     CHEONAN_DORM(Campus.CHEONAN, CafeteriaName.DORMITORY),
+
     YESAN_STUDENT(Campus.YESAN, CafeteriaName.STUDENT_CAFETERIA),
     YESAN_EMPLOYEE(Campus.YESAN, CafeteriaName.EMPLOYEE_CAFETERIA);
 
