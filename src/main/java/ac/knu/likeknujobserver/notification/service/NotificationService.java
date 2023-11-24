@@ -5,12 +5,9 @@ import ac.knu.likeknujobserver.announcement.value.Tag;
 import ac.knu.likeknujobserver.common.value.Campus;
 import ac.knu.likeknujobserver.notification.domain.Device;
 import ac.knu.likeknujobserver.notification.domain.Notification;
+import ac.knu.likeknujobserver.notification.firebase.FirebaseCloudMessage;
 import ac.knu.likeknujobserver.notification.repository.DeviceRepository;
 import ac.knu.likeknujobserver.notification.repository.NotificationRepository;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.MulticastMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +19,16 @@ import java.util.Objects;
 @Service
 public class NotificationService {
 
+    private static final String OPEN_PAGE_URL = "/notification";
+
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
+    private final FirebaseCloudMessage firebaseCloudMessage;
 
-    public NotificationService(DeviceRepository deviceRepository, NotificationRepository notificationRepository) {
+    public NotificationService(DeviceRepository deviceRepository, NotificationRepository notificationRepository, FirebaseCloudMessage firebaseCloudMessage) {
         this.deviceRepository = deviceRepository;
         this.notificationRepository = notificationRepository;
+        this.firebaseCloudMessage = firebaseCloudMessage;
     }
 
     @Async
@@ -44,7 +45,9 @@ public class NotificationService {
                 .filter(Objects::nonNull)
                 .toList();
         if (!tokens.isEmpty()) {
-            sendFcmCloudMessage(tokens, announcement.getTag(), announcement);
+            String title = String.format("[%s] 새로운 공지사항", tag.getTagName());
+            String body = announcement.getAnnouncementTitle();
+            firebaseCloudMessage.sendMessage(title, body, OPEN_PAGE_URL, tokens);
             saveNotification(announcement, subscribedDevices);
         }
     }
@@ -54,23 +57,6 @@ public class NotificationService {
             return deviceRepository.findBySubscribeTagsContaining(tag);
         }
         return deviceRepository.findByCampusAndSubscribeTagsContaining(campus, tag);
-    }
-
-    private void sendFcmCloudMessage(List<String> subscribedDevices, Tag tag, Announcement announcement) {
-        MulticastMessage multicastMessage = MulticastMessage.builder()
-                .setNotification(com.google.firebase.messaging.Notification.builder()
-                        .setTitle(String.format("[%s] 새로운 공지사항", tag.getTagName()))
-                        .setBody(announcement.getAnnouncementTitle())
-                        .build())
-                .putData("announcement_url", announcement.getAnnouncementUrl())
-                .addAllTokens(subscribedDevices)
-                .build();
-
-        try {
-            BatchResponse batchResponse = FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage);
-        } catch (FirebaseMessagingException e) {
-            //TODO FCM error handling
-        }
     }
 
     private void saveNotification(Announcement announcement, List<Device> subscribedDevices) {
