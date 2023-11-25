@@ -36,7 +36,7 @@ jobs:
         run: aws deploy push
           --application-name LikeKNU-Job
           --ignore-hidden-files
-          --s3-location s3://like-knu-job-bucket/job-archive/$GITHUB_SHA.zip
+          --s3-location s3://like-knu-job-bucket/archive/$GITHUB_SHA.zip
           --source .
 
       - name: Deploy EC2
@@ -44,4 +44,4 @@ jobs:
           --application-name LikeKNU-Job
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name LikeKNU-Job-Deployment-group
-          --s3-location bucket=like-knu-job-bucket,key=job-archive/$GITHUB_SHA.zip,bundleType=zip
+          --s3-location bucket=like-knu-job-bucket,key=archive/$GITHUB_SHA.zip,bundleType=zip

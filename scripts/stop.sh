@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_PATH="/home/ubuntu/job-deploy"
+ROOT_PATH="/home/ubuntu/deploy"
 JAR="$ROOT_PATH/job-application.jar"
 STOP_LOG="$ROOT_PATH/stop.log"
 SERVICE_PID=$(pgrep -f $JAR)
