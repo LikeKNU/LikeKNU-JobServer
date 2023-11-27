@@ -68,7 +68,7 @@ public class AnnouncementService {
 
         caching(announcementMessage);
         if (isAlreadyCollected(announcementMessage)) {
-            updateCollectedDate(announcementMessage);
+            updateCollectedAnnouncement(announcementMessage);
             return;
         }
 
@@ -102,14 +102,12 @@ public class AnnouncementService {
                 .anyMatch(announcement -> announcement.isSameUrl(url));
     }
 
-    private void updateCollectedDate(AnnouncementMessage announcementMessage) {
+    private void updateCollectedAnnouncement(AnnouncementMessage announcementMessage) {
         String title = announcementMessage.getTitle();
         String url = announcementMessage.getAnnouncementUrl();
-        announcementRepository.findByAnnouncementTitle(title)
-                .stream()
-                .filter(announcement -> announcement.isSameUrl(url))
-                .findAny()
-                .ifPresent(Announcement::updateCollectedAtNow);
+
+        announcementRepository.findByAnnouncementUrl(url)
+                .ifPresent(announcement -> announcement.modifyTitle(title));
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {

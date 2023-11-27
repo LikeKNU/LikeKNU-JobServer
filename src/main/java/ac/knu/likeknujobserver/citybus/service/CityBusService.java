@@ -1,5 +1,6 @@
 package ac.knu.likeknujobserver.citybus.service;
 
+import ac.knu.likeknujobserver.citybus.domain.CityBus;
 import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import org.springframework.stereotype.Service;
@@ -26,19 +27,21 @@ public class CityBusService {
         Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
 
         cityBusRepository.findByIsRealtimeIsTrue()
-                .forEach(cityBus -> {
-                    String busStop = cityBus.getBusStop();
-                    String busName = cityBus.getBusName();
-                    Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
+                .forEach(cityBus -> updateBusArrivalTimes(cityBus, busArrivalTimeMap));
+    }
 
-                    if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
-                        List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName)
-                                .stream()
-                                .map(BusArrivalTimeMessage::getArrivalTime)
-                                .toList();
-                        cityBus.updateArrivalTimes(arrivalTimes);
-                    }
-                });
+    private static void updateBusArrivalTimes(CityBus cityBus, Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap) {
+        String busStop = cityBus.getBusStop();
+        String busName = cityBus.getBusName();
+        Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
+
+        if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
+            List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName)
+                    .stream()
+                    .map(BusArrivalTimeMessage::getArrivalTime)
+                    .toList();
+            cityBus.updateArrivalTimes(arrivalTimes);
+        }
     }
 
     private Map<String, Map<String, List<BusArrivalTimeMessage>>> groupingByDepartureStopAndBusName(List<BusArrivalTimeMessage> busArrivalTimes) {

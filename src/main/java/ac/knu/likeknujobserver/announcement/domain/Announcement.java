@@ -81,7 +81,8 @@ public class Announcement extends BaseEntity {
         return this.announcementUrl.equals(url);
     }
 
-    public void updateCollectedAtNow() {
+    public void modifyTitle(String title) {
+        this.announcementTitle = title;
         this.collectedAt = LocalDateTime.now();
     }
 }
