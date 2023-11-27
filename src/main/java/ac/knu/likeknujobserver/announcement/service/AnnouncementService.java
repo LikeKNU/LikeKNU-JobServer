@@ -95,19 +95,15 @@ public class AnnouncementService {
     }
 
     private boolean isAlreadyCollected(AnnouncementMessage announcementMessage) {
-        String title = announcementMessage.getTitle();
         String url = announcementMessage.getAnnouncementUrl();
-        return announcementRepository.findByAnnouncementTitle(title)
-                .stream()
-                .anyMatch(announcement -> announcement.isSameUrl(url));
+        return announcementRepository.findByAnnouncementUrl(url)
+                .isPresent();
     }
 
     private void updateCollectedAnnouncement(AnnouncementMessage announcementMessage) {
-        String title = announcementMessage.getTitle();
         String url = announcementMessage.getAnnouncementUrl();
-
         announcementRepository.findByAnnouncementUrl(url)
-                .ifPresent(announcement -> announcement.modifyTitle(title));
+                .ifPresent(announcement -> announcement.update(announcementMessage));
     }
 
     private Tag abstractTagOfAnnouncement(AnnouncementMessage announcementMessage) {
@@ -117,5 +113,4 @@ public class AnnouncementService {
 
         return Tag.valueOf(announcementMessage.getCategory().name());
     }
-
 }

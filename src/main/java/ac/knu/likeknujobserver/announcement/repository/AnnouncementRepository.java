@@ -11,7 +11,5 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Stri
 
     List<Announcement> findTop30ByCategoryOrderByCollectedAtDesc(Category category);
 
-    List<Announcement> findByAnnouncementTitle(String title);
-
     Optional<Announcement> findByAnnouncementUrl(String url);
 }
