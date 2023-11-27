@@ -77,12 +77,10 @@ public class Announcement extends BaseEntity {
                 .build();
     }
 
-    public boolean isSameUrl(String url) {
-        return this.announcementUrl.equals(url);
-    }
-
-    public void modifyTitle(String title) {
+    public void update(AnnouncementMessage announcementMessage) {
+        String title = announcementMessage.getTitle();
+        Campus campus = announcementMessage.getCampus();
         this.announcementTitle = title;
-        this.collectedAt = LocalDateTime.now();
+        this.campus = campus;
     }
 }
