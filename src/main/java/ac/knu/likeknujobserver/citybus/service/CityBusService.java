@@ -2,15 +2,17 @@ package ac.knu.likeknujobserver.citybus.service;
 
 import ac.knu.likeknujobserver.citybus.domain.CityBus;
 import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
+import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @Service
@@ -23,32 +25,26 @@ public class CityBusService {
     }
 
     @Transactional
-    public void updateRealtimeBusArrivalTime(List<BusArrivalTimeMessage> busArrivalTimes) {
-        Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap = groupingByDepartureStopAndBusName(busArrivalTimes);
-
-        cityBusRepository.findByIsRealtimeIsTrue()
-                .forEach(cityBus -> updateBusArrivalTimes(cityBus, busArrivalTimeMap));
+    public void updateRealtimeBusArrivalTime(@Valid List<BusArrivalTimeMessage> busArrivalTimes) {
+        Map<DepartureStop, List<BusArrivalTimeMessage>> busArrivalTimesMap = busArrivalTimes.stream()
+                .collect(Collectors.groupingBy(BusArrivalTimeMessage::getDepartureStop));
+        busArrivalTimesMap.forEach(this::updateBusArrivalTimes);
     }
 
-    private static void updateBusArrivalTimes(CityBus cityBus, Map<String, Map<String, List<BusArrivalTimeMessage>>> busArrivalTimeMap) {
-        String busStop = cityBus.getBusStop();
+    private void updateBusArrivalTimes(DepartureStop departureStop, List<BusArrivalTimeMessage> busArrivalTimes) {
+        Map<String, List<BusArrivalTimeMessage>> busArrivalTimesMap = busArrivalTimes.stream()
+                .collect(Collectors.groupingBy(BusArrivalTimeMessage::getBusName));
+
+        List<CityBus> cityBuses = cityBusRepository.findByBusStop(departureStop.getStopName());
+        cityBuses.forEach(cityBus -> updateArrivalTimes(cityBus, busArrivalTimesMap));
+    }
+
+    private static void updateArrivalTimes(CityBus cityBus, Map<String, List<BusArrivalTimeMessage>> busArrivalTimesMap) {
         String busName = cityBus.getBusName();
-        Map<String, List<BusArrivalTimeMessage>> eachBusArrivalTimeMap = busArrivalTimeMap.get(busStop);
-
-        if (eachBusArrivalTimeMap != null && busArrivalTimeMap.get(busStop).containsKey(busName)) {
-            List<LocalTime> arrivalTimes = eachBusArrivalTimeMap.get(busName)
-                    .stream()
-                    .map(BusArrivalTimeMessage::getArrivalTime)
-                    .toList();
-            cityBus.updateArrivalTimes(arrivalTimes);
-        }
-    }
-
-    private Map<String, Map<String, List<BusArrivalTimeMessage>>> groupingByDepartureStopAndBusName(List<BusArrivalTimeMessage> busArrivalTimes) {
-        return busArrivalTimes.stream()
-                .collect(
-                        groupingBy(busArrivalTime -> busArrivalTime.getDepartureStop().getStopName(),
-                                groupingBy(BusArrivalTimeMessage::getBusName))
-                );
+        List<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
+                .stream()
+                .map(BusArrivalTimeMessage::getArrivalTime)
+                .toList();
+        cityBus.updateArrivalTimes(arrivalTimes);
     }
 }

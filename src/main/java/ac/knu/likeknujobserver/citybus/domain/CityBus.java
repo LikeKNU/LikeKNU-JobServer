@@ -71,10 +71,6 @@ public class CityBus extends BaseEntity {
         this.isRealtime = isRealtime;
     }
 
-    public void addArrivalTime(LocalTime arrivalTime) {
-        arrivalTimes.add(arrivalTime);
-    }
-
     public void updateArrivalTimes(List<LocalTime> arrivalTimes) {
         this.arrivalTimes.clear();
         this.arrivalTimes.addAll(arrivalTimes);

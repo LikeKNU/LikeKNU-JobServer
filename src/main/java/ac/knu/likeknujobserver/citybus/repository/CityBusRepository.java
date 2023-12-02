@@ -10,5 +10,5 @@ import java.util.List;
 public interface CityBusRepository extends JpaRepository<CityBus, String> {
 
     @EntityGraph(value = EntityGraphNames.BUS_ARRIVAL_TIMES)
-    List<CityBus> findByIsRealtimeIsTrue();
+    List<CityBus> findByBusStop(String stopName);
 }
