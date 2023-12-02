@@ -14,10 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatList;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -49,9 +52,15 @@ class CityBusServiceTest {
                 CityBus.builder().busName("100").busStop(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()).build(),
                 CityBus.builder().busName("200").busStop(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()).build()
         );
+        Map<String, List<CityBus>> cityBusesMap = cityBuses.stream()
+                .collect(Collectors.groupingBy(CityBus::getBusStop));
 
         // when
-        when(cityBusRepository.findByIsRealtimeIsTrue()).thenReturn(cityBuses);
+        when(cityBusRepository.findByBusStop(eq(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY.getStopName())))
+                .thenReturn(cityBusesMap.get(DepartureStop.KONGJU_ENGINEERING_UNIVERSITY.getStopName()));
+        when(cityBusRepository.findByBusStop(eq(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName())))
+                .thenReturn(cityBusesMap.get(DepartureStop.DUJEONG_STATION_ENTRANCE.getStopName()));
+
         cityBusService.updateRealtimeBusArrivalTime(busArrivalTimes);
 
         // then
