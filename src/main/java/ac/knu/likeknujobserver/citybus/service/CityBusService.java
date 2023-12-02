@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -41,10 +42,10 @@ public class CityBusService {
 
     private static void updateArrivalTimes(CityBus cityBus, Map<String, List<BusArrivalTimeMessage>> busArrivalTimesMap) {
         String busName = cityBus.getBusName();
-        List<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
+        Set<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
                 .stream()
                 .map(BusArrivalTimeMessage::getArrivalTime)
-                .toList();
+                .collect(Collectors.toSet());
         cityBus.updateArrivalTimes(arrivalTimes);
     }
 }

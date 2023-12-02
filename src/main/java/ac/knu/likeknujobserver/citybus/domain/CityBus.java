@@ -20,6 +20,7 @@ import lombok.Getter;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NamedEntityGraphs(
@@ -71,7 +72,7 @@ public class CityBus extends BaseEntity {
         this.isRealtime = isRealtime;
     }
 
-    public void updateArrivalTimes(List<LocalTime> arrivalTimes) {
+    public void updateArrivalTimes(Set<LocalTime> arrivalTimes) {
         this.arrivalTimes.clear();
         this.arrivalTimes.addAll(arrivalTimes);
     }
