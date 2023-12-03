@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -68,8 +67,8 @@ class CityBusServiceTest {
         assertAll(
                 () -> assertThat(cityBus).isNotNull(),
                 () -> assertThat(cityBus.getArrivalTimes()).isNotEmpty(),
-                () -> assertThatList(cityBus.getArrivalTimes()).hasSize(2),
-                () -> assertThat(cityBus.getArrivalTimes().get(0)).isEqualTo(LocalTime.of(9, 0))
+                () -> assertThat(cityBus.getArrivalTimes()).hasSize(2),
+                () -> assertThat(cityBus.getArrivalTimes()).contains(LocalTime.of(9, 0))
         );
     }
 }

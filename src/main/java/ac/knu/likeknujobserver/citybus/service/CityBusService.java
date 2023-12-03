@@ -5,17 +5,16 @@ import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-@Transactional(readOnly = true)
 @Service
 public class CityBusService {
 
@@ -25,7 +24,6 @@ public class CityBusService {
         this.cityBusRepository = cityBusRepository;
     }
 
-    @Transactional
     public void updateRealtimeBusArrivalTime(@Valid List<BusArrivalTimeMessage> busArrivalTimes) {
         Map<DepartureStop, List<BusArrivalTimeMessage>> busArrivalTimesMap = busArrivalTimes.stream()
                 .collect(Collectors.groupingBy(BusArrivalTimeMessage::getDepartureStop));
@@ -40,12 +38,17 @@ public class CityBusService {
         cityBuses.forEach(cityBus -> updateArrivalTimes(cityBus, busArrivalTimesMap));
     }
 
-    private static void updateArrivalTimes(CityBus cityBus, Map<String, List<BusArrivalTimeMessage>> busArrivalTimesMap) {
+    private void updateArrivalTimes(CityBus cityBus, Map<String, List<BusArrivalTimeMessage>> busArrivalTimesMap) {
         String busName = cityBus.getBusName();
-        Set<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
+        Collection<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
                 .stream()
                 .map(BusArrivalTimeMessage::getArrivalTime)
                 .collect(Collectors.toSet());
         cityBus.updateArrivalTimes(arrivalTimes);
+
+        try {
+            cityBusRepository.save(cityBus);
+        } catch (DataIntegrityViolationException ignored) {
+        }
     }
 }
