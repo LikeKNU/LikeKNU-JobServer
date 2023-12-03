@@ -19,6 +19,8 @@ import lombok.Getter;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +58,7 @@ public class CityBus extends BaseEntity {
     @CollectionTable(name = "bus_time", joinColumns = @JoinColumn(name = "bus_id"))
     @Column(name = "arrival_time")
     @ElementCollection
-    private List<LocalTime> arrivalTimes = new ArrayList<>();
+    private Set<LocalTime> arrivalTimes = new HashSet<>();
 
     protected CityBus() {
         super(Domain.CITY_BUS);
@@ -72,8 +74,7 @@ public class CityBus extends BaseEntity {
         this.isRealtime = isRealtime;
     }
 
-    public void updateArrivalTimes(Set<LocalTime> arrivalTimes) {
-        this.arrivalTimes.clear();
-        this.arrivalTimes.addAll(arrivalTimes);
+    public void updateArrivalTimes(Collection<LocalTime> arrivalTimes) {
+        this.arrivalTimes = new HashSet<>(arrivalTimes);
     }
 }
