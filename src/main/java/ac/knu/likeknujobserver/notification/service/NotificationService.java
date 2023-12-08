@@ -40,16 +40,20 @@ public class NotificationService {
                 .filter(Device::isTurnOnNotification)
                 .toList();
 
-        List<String> tokens = subscribedDevices.stream()
-                .map(Device::getFcmToken)
-                .filter(Objects::nonNull)
-                .toList();
+        List<String> tokens = extractPushNotificationTokens(subscribedDevices);
         if (!tokens.isEmpty()) {
             String title = String.format("[%s] 새로운 공지사항", tag.getTagName());
             String body = announcement.getAnnouncementTitle();
             firebaseCloudMessage.sendMessage(title, body, OPEN_PAGE_URL, tokens);
             saveNotification(announcement, subscribedDevices);
         }
+    }
+
+    private static List<String> extractPushNotificationTokens(List<Device> subscribedDevices) {
+        return subscribedDevices.stream()
+                .map(Device::getFcmToken)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private List<Device> getDevices(Campus campus, Tag tag) {
