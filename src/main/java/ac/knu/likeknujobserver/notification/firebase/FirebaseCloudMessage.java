@@ -4,10 +4,12 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class FirebaseCloudMessage {
 
@@ -25,8 +27,10 @@ public class FirebaseCloudMessage {
 
         try {
             BatchResponse batchResponse = FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage);
+            int successCount = batchResponse.getSuccessCount();
+            log.info("Push notifications successfully sent = {}, total = {}", successCount, tokens.size());
         } catch (FirebaseMessagingException e) {
-            //TODO FCM error handling
+            log.error("Failed to send push notifications", e);
         }
     }
 }
