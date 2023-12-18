@@ -3,7 +3,6 @@ package ac.knu.likeknujobserver.notification.firebase;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.SendResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -33,19 +32,19 @@ public class FirebaseCloudMessage {
             int successCount = batchResponse.getSuccessCount();
             log.info("Push notifications successfully sent = {}, total = {}", successCount, tokens.size());
 
-            List<MessagingErrorCode> messagingErrorCodes = getMessagingErrorCodes(batchResponse);
-            log.info("messagingErrorCodes = {}", messagingErrorCodes);
+            loggingNotificationsError(batchResponse);
         } catch (FirebaseMessagingException e) {
             log.error("Failed to send push notifications", e);
         }
     }
 
-    private List<MessagingErrorCode> getMessagingErrorCodes(BatchResponse batchResponse) {
-        return batchResponse.getResponses()
+    private static void loggingNotificationsError(BatchResponse batchResponse) {
+        batchResponse.getResponses()
                 .stream()
                 .filter(response -> !response.isSuccessful())
+                .peek(response -> log.info("response.getMessageId() = {}", response.getMessageId()))
                 .map(SendResponse::getException)
                 .map(FirebaseMessagingException::getMessagingErrorCode)
-                .toList();
+                .peek(errorCode -> log.info("errorCode = {}", errorCode));
     }
 }
