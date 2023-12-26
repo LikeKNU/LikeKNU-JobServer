@@ -5,6 +5,7 @@ import ac.knu.likeknujobserver.calendar.dto.AcademicCalendarMessage;
 import ac.knu.likeknujobserver.calendar.repository.AcademicCalendarRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -47,11 +48,16 @@ public class AcademicCalendarService {
     }
 
     public void updateCalendar(AcademicCalendarMessage academicCalendarMessage) {
-        if (isAlreadyCollected(academicCalendarMessage))
+        if (isAlreadyCollected(academicCalendarMessage)) {
             return;
+        }
 
         caching(academicCalendarMessage);
-        academicCalendarRepository.save(AcademicCalendar.of(academicCalendarMessage));
+
+        try {
+            academicCalendarRepository.save(AcademicCalendar.of(academicCalendarMessage));
+        } catch (DataIntegrityViolationException ignore) {
+        }
     }
 
     private boolean isAlreadyCollected(AcademicCalendarMessage academicCalendarMessage) {
