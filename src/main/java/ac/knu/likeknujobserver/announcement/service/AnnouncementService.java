@@ -46,7 +46,8 @@ public class AnnouncementService {
         Arrays.stream(Category.values())
                 .forEach(category -> ANNOUNCEMENT_CACHE.put(category, new LinkedBlockingQueue<>()));
 
-        announcementsGroupingByCategory.keySet().stream()
+        announcementsGroupingByCategory.keySet()
+                .stream()
                 .flatMap(category -> announcementsGroupingByCategory.get(category)
                         .stream()
                         .map(AnnouncementMessage::of))
