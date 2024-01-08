@@ -38,7 +38,7 @@ public class FirebaseCloudMessage {
         }
     }
 
-    private static void loggingNotificationsError(BatchResponse batchResponse) {
+    private void loggingNotificationsError(BatchResponse batchResponse) {
         batchResponse.getResponses()
                 .stream()
                 .filter(response -> !response.isSuccessful())
