@@ -9,5 +9,5 @@ if [ -z "$SERVICE_PID" ]; then
   echo "서비스 NotFound" >> $STOP_LOG
 else
   echo "서비스 종료 " >> $STOP_LOG
-  kill -9 "$SERVICE_PID"
+  sudo kill -9 "$SERVICE_PID"
 fi
