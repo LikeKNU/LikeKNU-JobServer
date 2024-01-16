@@ -32,19 +32,22 @@ public class FirebaseCloudMessage {
             int successCount = batchResponse.getSuccessCount();
             log.info("Push notifications successfully sent = {}, total = {}", successCount, tokens.size());
 
-            loggingNotificationsError(batchResponse);
+            loggingNotificationsError(batchResponse, tokens);
         } catch (FirebaseMessagingException e) {
             log.error("Failed to send push notifications", e);
         }
     }
 
-    private void loggingNotificationsError(BatchResponse batchResponse) {
-        batchResponse.getResponses()
-                .stream()
-                .filter(response -> !response.isSuccessful())
-                .peek(response -> log.info("response.getMessageId() = {}", response.getMessageId()))
-                .map(SendResponse::getException)
-                .map(FirebaseMessagingException::getMessagingErrorCode)
-                .peek(errorCode -> log.info("errorCode = {}", errorCode));
+    private void loggingNotificationsError(BatchResponse batchResponse, List<String> tokens) {
+        List<SendResponse> responses = batchResponse.getResponses();
+        for (int i = 0; i < responses.size(); i++) {
+            SendResponse response = responses.get(i);
+            if (!response.isSuccessful()) {
+                log.info("token = {}", tokens.get(i));
+                FirebaseMessagingException messagingException = response.getException();
+                log.info("exception = ", messagingException);
+                log.info("messagingErrorCode = {}", messagingException.getMessagingErrorCode());
+            }
+        }
     }
 }
