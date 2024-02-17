@@ -47,6 +47,7 @@ public class CityBusService {
         Set<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
                 .stream()
                 .map(BusArrivalTimeMessage::getArrivalTime)
+                .peek(localTime -> log.info("localTime = {}", localTime))
                 .collect(Collectors.toSet());
         log.info("busName = {}, arrivalTimes = {}", busName, arrivalTimes);
         cityBus.updateArrivalTimes(arrivalTimes);

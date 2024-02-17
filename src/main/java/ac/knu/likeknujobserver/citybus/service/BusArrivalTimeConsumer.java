@@ -20,6 +20,7 @@ public class BusArrivalTimeConsumer {
 
     @RabbitListener(queues = "${rabbitmq.bus-arrival-time-queue-name}")
     public void consumeBusArrivalTimeMessage(@Valid List<BusArrivalTimeMessage> busArrivalTimes) {
+        log.info("busArrivalTimes = {}", busArrivalTimes);
         cityBusService.updateRealtimeBusArrivalTime(busArrivalTimes);
     }
 }
