@@ -5,7 +5,6 @@ import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Transactional
 @Service
 public class CityBusService {
@@ -47,9 +45,7 @@ public class CityBusService {
         Set<LocalTime> arrivalTimes = busArrivalTimesMap.getOrDefault(busName, Collections.emptyList())
                 .stream()
                 .map(BusArrivalTimeMessage::getArrivalTime)
-                .peek(localTime -> log.info("localTime = {}", localTime))
                 .collect(Collectors.toSet());
-        log.info("busName = {}, arrivalTimes = {}", busName, arrivalTimes);
         cityBus.updateArrivalTimes(arrivalTimes);
 
         try {
