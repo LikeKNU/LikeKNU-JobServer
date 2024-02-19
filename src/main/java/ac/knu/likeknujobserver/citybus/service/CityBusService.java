@@ -5,9 +5,9 @@ import ac.knu.likeknujobserver.citybus.dto.BusArrivalTimeMessage;
 import ac.knu.likeknujobserver.citybus.dto.DepartureStop;
 import ac.knu.likeknujobserver.citybus.repository.CityBusRepository;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Transactional
+@Slf4j
 @Service
 public class CityBusService {
 
@@ -50,7 +50,8 @@ public class CityBusService {
 
         try {
             cityBusRepository.save(cityBus);
-        } catch (DataIntegrityViolationException ignored) {
+        } catch (DataIntegrityViolationException e) {
+            log.error("message = {}", e.getMessage());
         }
     }
 }
