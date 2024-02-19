@@ -75,6 +75,7 @@ public class CityBus extends BaseEntity {
     }
 
     public void updateArrivalTimes(Collection<LocalTime> arrivalTimes) {
-        this.arrivalTimes = new HashSet<>(arrivalTimes);
+        this.arrivalTimes.clear();
+        this.arrivalTimes.addAll(arrivalTimes);
     }
 }
