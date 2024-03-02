@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.announcement.service;
 
-import ac.knu.likeknujobserver.announcement.api.OpenAIFineTuning;
+import ac.knu.likeknujobserver.announcement.ai.OpenAIFineTuning;
 import ac.knu.likeknujobserver.announcement.domain.Announcement;
 import ac.knu.likeknujobserver.announcement.dto.AnnouncementMessage;
 import ac.knu.likeknujobserver.announcement.repository.AnnouncementRepository;
