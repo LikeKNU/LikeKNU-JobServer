@@ -1,6 +1,6 @@
 package ac.knu.likeknujobserver.menu.service;
 
-import ac.knu.likeknujobserver.menu.dto.MenuMessage;
+import ac.knu.likeknujobserver.menu.dto.MealMessage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class MenuConsumer {
     private final MenuService menuService;
 
     @RabbitListener(queues = "${rabbitmq.menu-queue-name}")
-    public void consumeMenuMessage(@Valid MenuMessage menuMessage) {
-        menuService.updateMenu(menuMessage);
+    public void consumeMenuMessage(@Valid MealMessage mealMessage) {
+        menuService.updateMenus(mealMessage);
     }
 }
